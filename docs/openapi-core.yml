@@ -55,11 +55,6 @@ paths:
           required: true
           schema:
             type: integer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Post'
       responses:
         '200':
           description: OK response
