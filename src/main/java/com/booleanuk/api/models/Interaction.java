@@ -34,4 +34,7 @@ public class Interaction {
     @Column
     private String interactedAt;
 
+    public Interaction(String type){
+        setType(type);
+    }
 }
