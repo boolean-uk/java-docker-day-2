@@ -33,10 +33,10 @@ public class Post {
     private List<Interaction> interactions;
 
     @Column
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     @Column
-    private LocalDateTime updatedAt;
+    private String updatedAt;
 
     public Post(String content){
         setContent(content);

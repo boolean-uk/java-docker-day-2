@@ -32,6 +32,6 @@ public class Interaction {
     private String type;
 
     @Column
-    private LocalDateTime interactedAt;
+    private String interactedAt;
 
 }

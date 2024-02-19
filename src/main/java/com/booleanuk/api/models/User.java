@@ -32,10 +32,10 @@ public class User {
     private String phone;
 
     @Column
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     @Column
-    private LocalDateTime updatedAt;
+    private String updatedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties("user")
