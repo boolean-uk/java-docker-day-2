@@ -22,6 +22,14 @@ public class User {
     @Column(name = "password")
     private String password;
 
+    @OneToMany(mappedBy = "follower")
+    @JsonIgnoreProperties("follower")
+    private List<Follow> followers;
+
+    @OneToMany(mappedBy = "follows")
+    @JsonIgnoreProperties("follows")
+    private List<Follow> following;
+
     @OneToMany(mappedBy = "user")
     @JsonIgnoreProperties("user")
     private List<Post> posts;

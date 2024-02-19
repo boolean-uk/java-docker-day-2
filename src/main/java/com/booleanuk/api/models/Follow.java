@@ -1,5 +1,6 @@
 package com.booleanuk.api.models;
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,16 +14,22 @@ public class Follow {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    //private User follower;
+    @ManyToOne
+    @JoinColumn(name = "follower_id")
+    @JsonIncludeProperties(value = {"username"})
+    private User follower;
 
-    //private User follows;
+    @ManyToOne
+    @JoinColumn(name = "follows_id")
+    @JsonIncludeProperties(value = {"username"})
+    private User follows;
 
     public Follow(int id) {
         this.id = id;
     }
 
-    //public Follow(User follower, User follows) {
-    //    this.follower = follower;
-    //    this.follows = follows;
-    //}
+    public Follow(User follower, User follows) {
+        this.follower = follower;
+        this.follows = follows;
+    }
 }
