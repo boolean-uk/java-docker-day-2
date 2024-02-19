@@ -58,6 +58,7 @@ public class PostController {
             errorResponse.set("No user with that username found");
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         }
+        post.setUser(userPosting);
         this.postRepository.save(post);
         userPosting.addPost(post);
         this.userRepository.save(userPosting);

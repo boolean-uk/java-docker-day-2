@@ -59,6 +59,10 @@ public class User {
         this.email =       email;
     }
 
+    public User(int id)   {
+        this.id = id;
+    }
+
     public void addPost(Post post)  {
         this.posts.add(post);
     }

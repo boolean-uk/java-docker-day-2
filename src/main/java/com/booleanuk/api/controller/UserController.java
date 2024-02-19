@@ -1,5 +1,6 @@
 package com.booleanuk.api.controller;
 
+import com.booleanuk.api.model.Post;
 import com.booleanuk.api.model.User;
 import com.booleanuk.api.payload.response.ErrorResponse;
 import com.booleanuk.api.payload.response.Response;
@@ -48,6 +49,13 @@ public class UserController {
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
         }
 
+        if(user.getUsername().contains(" "))
+        {
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.set("Username cannot contain whitespace");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
         this.userRepository.save(user);
         UserResponse userResponse = new UserResponse();
         userResponse.set(user);
@@ -81,6 +89,11 @@ public class UserController {
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.set("No user by that id was found");
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+
+        for(Post p : userToDelete.getPosts())
+        {
+            userToDelete.removePost(p);
         }
 
         this.userRepository.delete(userToDelete);
