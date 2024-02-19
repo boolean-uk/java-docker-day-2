@@ -9,7 +9,62 @@ servers:
 tags:
   - name: users
   - name: posts
+  - name: interactions
 paths:
+  /interactions:
+    post:
+      tags:
+        - interactions
+      summary: Interaction POST route
+      description: Description of a interaction POST route
+      operationId: createInteraction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInteraction'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interaction'
+    get:
+      tags:
+        - interactions
+      summary: Interaction GET route
+      description: Description of a interaction GET route
+      operationId: getAllInteractions
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllInteractions'
+  /interactions/{id}:
+    delete:
+      tags:
+        - interactions
+      summary: Interaction DELETE route
+      description: Description of a interaction DELETE route
+      operationId: deleteInteraction
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the interaction to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interaction'
+
   /posts:
     post:
       tags:
@@ -169,16 +224,44 @@ paths:
 
 components:
   schemas:
+    CreateInteraction:
+      type: object
+      required: [ type ]
+      properties:
+        type:
+          type: string
+          example: "Upvote"
+    Interaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        type:
+          type: string
+          example: "Upvote"
+        userid:
+          type: integer
+          example: 1
+        postid:
+          type: integer
+          example: 1
+        interactedAt:
+          type: string
+          format: DateTime
+          example: 2024-02-19T15:30:45
+    AllInteractions:
+      type: array
+      items:
+        $ref: '#/components/schemas/Interaction'
+
     CreatePost:
       type: object
-      required: [ content, userid ]
+      required: [ content ]
       properties:
         content:
           type: string
           example: "Eating doritos lol.."
-        userid:
-          type: integer
-          example: 1
     Post:
       type: object
       properties:
@@ -203,6 +286,7 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Post'
+
     CreateUser:
       type: object
       required: [ name, username, dob, phone ]

@@ -34,6 +34,7 @@ public class PostController {
         post.setUser(tempUser);
         post.setInteractions(new ArrayList<>());
         post.setCreatedAt(nowFormatted());
+        post.setUpdateAt(nowFormatted());
         repo.save(post);
 
         return new ResponseEntity<>(post, HttpStatus.CREATED);
@@ -55,7 +56,7 @@ public class PostController {
         return ResponseEntity.ok(repo.findAll());
     }
 
-    @GetMapping()
+    @GetMapping("user")
     public ResponseEntity<List<Post>> getAllFromUser(@RequestParam(name = "user_id") int userId){
         User tempUser = users
                 .findById(userId)

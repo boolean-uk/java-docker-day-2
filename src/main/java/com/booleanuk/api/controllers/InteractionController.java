@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@RestController
+@RequestMapping("interactions")
 public class InteractionController {
     @Autowired
     private InteractionRepository repo;
@@ -33,11 +35,11 @@ public class InteractionController {
         User tempUser = users
                 .findById(userId)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND));
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot find user"));
         Post tempPost = posts
                 .findById(postId)
                 .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND));
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Cannot find post"));
 
         interaction.setUser(tempUser);
         interaction.setPost(tempPost);
@@ -52,7 +54,7 @@ public class InteractionController {
         return ResponseEntity.ok(repo.findAll());
     }
 
-    @GetMapping
+    @GetMapping("user")
     public ResponseEntity<List<Interaction>> getAllFromUser(@RequestParam(name = "user_id") int userId){
         User tempUser = users
                 .findById(userId)
@@ -62,7 +64,7 @@ public class InteractionController {
         return ResponseEntity.ok(tempUser.getInteractions());
     }
 
-    @GetMapping
+    @GetMapping("post")
     public ResponseEntity<List<Interaction>> getAllFromPost(@RequestParam(name = "post_id") int postId){
         Post tempPost = posts
                 .findById(postId)
