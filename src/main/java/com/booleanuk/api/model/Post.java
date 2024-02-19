@@ -1,5 +1,6 @@
 package com.booleanuk.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -21,7 +23,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties(value = {"id", "email", "likes", "username", "createdAt", "updatedAt"})
+    @JsonIgnoreProperties(value = {"id", "email", "likes", "createdAt", "updatedAt"})
     private User user;
 
     @Column
@@ -30,7 +32,17 @@ public class Post {
     @Column
     private LocalDate postedAt;
 
+    @ManyToMany
+    @JoinTable(
+            name = "user_like",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+    )
+    @JsonIgnore
+    private List<User> likes;
+
     @CreationTimestamp
+    @JsonIgnore
     private LocalDateTime createdAt;
     @PrePersist
     private void onCreate()  {
@@ -38,6 +50,7 @@ public class Post {
     }
 
     @UpdateTimestamp
+    @JsonIgnore
     private LocalDateTime updatedAt;
     @PreUpdate
     private void onUpdate() {

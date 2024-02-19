@@ -11,6 +11,8 @@ import com.booleanuk.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,19 +24,26 @@ public class PostController {
     @Autowired
     UserRepository userRepository;
 
-
-    @GetMapping
+    /**
+     * See posts of all users
+     * @return
+     */
+    @GetMapping("/all")
     public ResponseEntity<Response<?>> getAllPostsByAlLUsers()  {
         PostListResponse postListResponse = new PostListResponse();
         postListResponse.set(this.postRepository.findAll());
         return ResponseEntity.ok(postListResponse);
     }
 
-    /*
-    TODO
-        For extension
+    /**
+     * See posts of current user
+     * @return
+     */
     @GetMapping
-    public ResponseEntity<Response<?>> getAllPostsByUser(@RequestParam String username) {
+    public ResponseEntity<Response<?>> getAllPostsByCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
         User userPosting = this.userRepository.findByUsername(username).orElse(null);
         if(userPosting == null)
         {
@@ -45,12 +54,19 @@ public class PostController {
 
         PostListResponse postListResponse = new PostListResponse();
         postListResponse.set(userPosting.getPosts());
-        return
+        return ResponseEntity.ok(postListResponse);
     }
-    */
 
+    /**
+     * Create post as user
+     * @param post
+     * @return
+     */
     @PostMapping
-    public ResponseEntity<Response<?>> createAPost(@RequestBody Post post, @RequestParam String username)    {
+    public ResponseEntity<Response<?>> createAPost(@RequestBody Post post)    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
         User userPosting = this.userRepository.findByUsername(username).orElse(null);
         if(userPosting == null)
         {
@@ -58,6 +74,7 @@ public class PostController {
             errorResponse.set("No user with that username found");
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         }
+
         post.setUser(userPosting);
         this.postRepository.save(post);
         userPosting.addPost(post);
@@ -70,6 +87,17 @@ public class PostController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Response<?>> deleteAPost(@PathVariable int id)    {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        User userDeleting = this.userRepository.findByUsername(username).orElse(null);
+        if(userDeleting == null)
+        {
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.set("No user with that username found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+
         Post postToDelete = this.postRepository.findById(id).orElse(null);
         if(postToDelete == null)
         {
@@ -86,9 +114,10 @@ public class PostController {
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        userWhoPosted.removePost(postToDelete);
+        userDeleting.removePost(postToDelete);
         PostResponse postResponse = new PostResponse();
         postResponse.set(postToDelete);
         return ResponseEntity.ok(postResponse);
     }
+
 }

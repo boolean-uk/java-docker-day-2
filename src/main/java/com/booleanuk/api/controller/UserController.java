@@ -42,7 +42,6 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Response<?>> createUser(@RequestBody User user)   {
         if(user.getUsername() == null
-        || user.getDisplayName() == null
         || user.getEmail() == null) {
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.set("One or more required fields are null");
@@ -71,8 +70,6 @@ public class UserController {
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         }
 
-        if(user.getDisplayName() != null)
-            userToUpdate.setDisplayName(user.getDisplayName());
         if(user.getEmail() != null)
             userToUpdate.setEmail(user.getEmail());
 

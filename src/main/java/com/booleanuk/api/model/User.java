@@ -8,7 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -22,21 +24,38 @@ public class User {
     @Column(unique = true)
     private String username;
 
-    @Column(unique = true)
-    private String displayName;
 
     @Column(unique = true)
+    @JsonIgnore
     private String email;
+
+    @Column
+    @JsonIgnore
+    private String password;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Post> posts;
 
-    /*@OneToMany(mappedBy = "User")
-    private List<Post> likes;
-    */
+    @ManyToMany
+    @JoinTable(
+            name = "user_like",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id")
+
+    )
+    @JsonIgnore
+    private List<Post> likedPosts;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @JsonIgnore
+    private Set<Role> roles = new HashSet<>();
 
     @CreationTimestamp
+    @JsonIgnore
     private LocalDateTime createdAt;
     @PrePersist
     private void onCreate()  {
@@ -44,6 +63,7 @@ public class User {
     }
 
     @UpdateTimestamp
+    @JsonIgnore
     private LocalDateTime updatedAt;
     @PreUpdate
     private void onUpdate() {
@@ -52,11 +72,11 @@ public class User {
 
     public User(
             String username,
-            String displayName,
-            String email)   {
+            String email,
+            String password)   {
         this.username =    username;
-        this.displayName = displayName;
         this.email =       email;
+        this.password =    password;
     }
 
     public User(int id)   {
