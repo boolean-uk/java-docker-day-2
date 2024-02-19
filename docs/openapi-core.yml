@@ -15,13 +15,15 @@ paths:
         - posts
       summary: Create new post
       description: Create new post
+      operationId: createPost
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/CreatePost'
       responses:
-        201:
+        '201':
+          description: Created response
           content:
             application/json:
               schema:
@@ -31,8 +33,10 @@ paths:
         - posts
       summary: Get all posts
       description: Get all posts as list
+      operationId: getAllPosts
       responses:
-        200:
+        '200':
+          description: OK response
           content:
             application/json:
               schema:
@@ -43,6 +47,7 @@ paths:
         - posts
       summary: Get post
       description: Get post by id
+      operationId: getPostById
       parameters:
         - name: id
           in: path
@@ -56,7 +61,8 @@ paths:
             schema:
               $ref: '#/components/schemas/Post'
       responses:
-        200:
+        '200':
+          description: OK response
           content:
             application/json:
               schema:
@@ -67,6 +73,7 @@ paths:
         - posts
       summary: Update a post
       description: Update a post by id
+      operationId: updatePost
       parameters:
         - name: id
           in: path
@@ -80,7 +87,8 @@ paths:
             schema:
               $ref: '#/components/schemas/CreatePost'
       responses:
-        201:
+        '201':
+          description: Created response
           content:
             application/json:
               schema:
@@ -90,6 +98,7 @@ paths:
         - posts
       summary: Delete a post
       description: Delete a post by id
+      operationId: deletePost
       parameters:
         - name: id
           in: path
@@ -98,7 +107,8 @@ paths:
           schema:
             type: integer
       responses:
-        200:
+        '200':
+          description: OK response
           content:
             application/json:
               schema:
@@ -126,13 +136,11 @@ components:
         createdAt:
           type: string
           format: DateTime
-          pattern: YYYY-MM-DDTHH:MM:SS
-          example: 2024-02-19T14:27:56.633+00:00
+          example: '2024-02-19T11:00:00.000+00:00'
         updatedAt:
           type: string
           format: DateTime
-          pattern: YYYY-MM-DDTHH:MM:SS
-          example: 2024-02-19T16:00:00.112+00:00
+          example: '2024-02-19T15:00:00.000+00:00'
     AllPosts:
       type: array
       items:
