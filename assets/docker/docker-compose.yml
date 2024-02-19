@@ -1,6 +1,6 @@
 services:
   app:
-    image: 'post:latest'
+    image: 'dockerday2-box:latest'
     container_name: app
     depends_on:
       - db
