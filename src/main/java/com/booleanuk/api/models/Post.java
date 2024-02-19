@@ -31,8 +31,6 @@ public class Post {
 
     public Post(String content) {
         this.content = content;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
         this.likes = 0;
     }
 
@@ -40,7 +38,7 @@ public class Post {
         this.id = id;
     }
 
-    public void Like() {
+    public void like() {
         likes++;
     }
 }

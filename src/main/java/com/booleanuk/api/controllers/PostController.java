@@ -35,6 +35,8 @@ public class PostController {
     public ResponseEntity<Post> create(@RequestBody Post post) {
         Post postToCreate = this.postRepository.save(post);
         // Fill in nullable fields
+        postToCreate.setCreatedAt(LocalDateTime.now());
+        postToCreate.setUpdatedAt(postToCreate.getCreatedAt());
         this.postRepository.save(postToCreate);
         return new ResponseEntity<>(postToCreate, HttpStatus.CREATED);
     }
@@ -45,6 +47,13 @@ public class PostController {
         postToUpdate.setUpdatedAt(LocalDateTime.now());
         postToUpdate.setContent(post.getContent());
         return new ResponseEntity<Post>(this.postRepository.save(postToUpdate), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}/like")
+    public ResponseEntity<Post> like(@PathVariable int id) {
+        Post postToUpdate = this.postRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        postToUpdate.like();
+        return new ResponseEntity<Post>(this.postRepository.save(postToUpdate), HttpStatus.OK);
     }
 
     @DeleteMapping
