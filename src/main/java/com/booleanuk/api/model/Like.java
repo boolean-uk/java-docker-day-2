@@ -14,16 +14,18 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "likes")
 public class Like {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+
+     @EmbeddedId
+     private UserPostKey id;
 
     @ManyToOne
+    @MapsId("user_id")
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIncludeProperties(value = {"username"})
     private User user;
 
     @ManyToOne
+    @MapsId("post_id")
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
