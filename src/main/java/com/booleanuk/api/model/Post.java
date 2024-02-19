@@ -49,8 +49,7 @@ public class Post {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime updatedAt;
 
-    public Post(User user, String text, String media) {
-        this.user = user;
+    public Post(String text, String media) {
         this.text = text;
         this.media = media;
     }
