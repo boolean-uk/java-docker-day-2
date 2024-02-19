@@ -31,14 +31,13 @@ public class UserController {
     }
 
 
-
     @PostMapping
-    public ResponseEntity<Response<?>> create(@RequestBody User user){
+    public ResponseEntity<Response<?>> create(@RequestBody User user) {
         User userCreate;
 
         try {
             userCreate = this.userRepository.save(user);
-        } catch (Exception e){
+        } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.set("Bad request");
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -49,9 +48,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Response<?>> update(@PathVariable int id, @RequestBody User user){
+    public ResponseEntity<Response<?>> update(@PathVariable int id, @RequestBody User user) {
         User user1 = this.userRepository.findById(id).orElse(null);
-        if (user1 == null){
+        if (user1 == null) {
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.set("Not found");
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
@@ -59,10 +58,10 @@ public class UserController {
         try {
 
             user1.setName(user.getName());
-        user1.setContactInfo(user.getContactInfo());
-        user1.setPassword(user.getPassword());
-        this.userRepository.save(user1);
-        }catch (Exception e){
+            user1.setContactInfo(user.getContactInfo());
+            user1.setPassword(user.getPassword());
+            this.userRepository.save(user1);
+        } catch (Exception e) {
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.set("Bad request");
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -73,9 +72,9 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Response<?>> delete(@PathVariable int id){
+    public ResponseEntity<Response<?>> delete(@PathVariable int id) {
         User userDelete = this.userRepository.findById(id).orElse(null);
-        if (userDelete == null){
+        if (userDelete == null) {
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.set("Not found student");
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
