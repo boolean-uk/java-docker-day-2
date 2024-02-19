@@ -3,7 +3,6 @@ package com.booleanuk.api.controller;
 import com.booleanuk.api.model.Repost;
 import com.booleanuk.api.model.Post;
 import com.booleanuk.api.model.User;
-import com.booleanuk.api.model.UserPostKey;
 import com.booleanuk.api.payload.response.ErrorResponse;
 import com.booleanuk.api.payload.response.RepostResponse;
 import com.booleanuk.api.payload.response.Response;
@@ -27,7 +26,6 @@ public class RepostController {
 
     @Autowired
     UserRepository userRepository;
-
 
     @GetMapping("/posts/{postId}")
     public ResponseEntity<Response<?>> getRepostsForPost(@PathVariable int postId) {
@@ -54,10 +52,6 @@ public class RepostController {
             return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
         Repost repost = new Repost(user, post);
-        UserPostKey userPostKey = new UserPostKey();
-        userPostKey.setPostId(post.getId());
-        userPostKey.setUserId(user.getId());
-        repost.setId(userPostKey);
 
         RepostResponse repostResponse = new RepostResponse();
         try {

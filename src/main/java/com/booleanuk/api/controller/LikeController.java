@@ -3,7 +3,6 @@ package com.booleanuk.api.controller;
 import com.booleanuk.api.model.Like;
 import com.booleanuk.api.model.Post;
 import com.booleanuk.api.model.User;
-import com.booleanuk.api.model.UserPostKey;
 import com.booleanuk.api.payload.response.*;
 import com.booleanuk.api.repository.LikeRepository;
 import com.booleanuk.api.repository.PostRepository;
@@ -52,10 +51,6 @@ public class LikeController {
             return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
         Like like = new Like(user, post);
-        UserPostKey userPostKey = new UserPostKey();
-        userPostKey.setPostId(post.getId());
-        userPostKey.setUserId(user.getId());
-        like.setId(userPostKey);
 
         LikeResponse likeResponse = new LikeResponse();
         try {

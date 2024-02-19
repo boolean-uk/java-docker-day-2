@@ -14,18 +14,16 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "reposts")
 public class Repost {
-
-    @EmbeddedId
-    private UserPostKey id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @ManyToOne
-    @MapsId("user_id")
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIncludeProperties(value = {"username"})
     private User user;
 
     @ManyToOne
-    @MapsId("post_id")
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
