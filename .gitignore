@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### For using elephantSQL for faster response during development ###
+application.yml
