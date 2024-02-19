@@ -17,7 +17,7 @@ public class Post {
     @Column
     private String description;
 
-    @Column
+    @Column(name = "is_liked")
     private boolean like;
 
     @Column

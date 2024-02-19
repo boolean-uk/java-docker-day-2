@@ -1,11 +1,15 @@
 package com.booleanuk.api.controller;
 
 import com.booleanuk.api.models.Post;
+import com.booleanuk.api.models.User;
 import com.booleanuk.api.payload.response.*;
 import com.booleanuk.api.repositories.PostRepository;
+import com.booleanuk.api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +22,9 @@ public class PostController {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping
     public ResponseEntity<PostListResponse> getAllPosts() {
         PostListResponse postListResponse = new PostListResponse();
@@ -26,7 +33,7 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<Response<?>> createItem(@RequestBody Post post) {
+    public ResponseEntity<Response<?>> createPost(@RequestBody Post post) {
         PostResponse postResponse = new PostResponse();
         try {
             postResponse.set(this.postRepository.save(post));
@@ -150,18 +157,30 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/repost")
-    public ResponseEntity<Response<?>> repost(@PathVariable int postId) {
+    public ResponseEntity<Response<?>> repost(@PathVariable int postId, @AuthenticationPrincipal UserDetails userDetails) {
         Post originalPost = postRepository.findById(postId).orElse(null);
         if (originalPost == null) {
             ErrorResponse error = new ErrorResponse();
             error.set("Post not found");
             return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
-        // Assuming repost means creating a new post with the same content
+
+        // Find the authenticated user making the repost request
+        User repostingUser = userRepository.findByUsername(userDetails.getUsername()).orElse(null);
+        if (repostingUser == null) {
+            ErrorResponse error = new ErrorResponse();
+            error.set("Authenticated user not found");
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+
+        // Create a repost with the same content but associate it with the reposting user
         Post repost = new Post(originalPost.getDescription(), originalPost.isLike(), true, originalPost.getComment());
+        repost.setUser(repostingUser); // Associate with the reposting user
         postRepository.save(repost);
+
         PostResponse postResponse = new PostResponse();
         postResponse.set(repost);
         return ResponseEntity.ok(postResponse);
     }
+
 }

@@ -63,7 +63,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/auth/**").permitAll() // Allow unauthenticated access to authentication endpoints
                         .requestMatchers(HttpMethod.GET,"/posts", "/posts/*").authenticated() // All authenticated users can view posts
-                        .requestMatchers(HttpMethod.POST, "/posts/**").authenticated() // All authenticated users can create posts and perform post-related actions (like, comment, repost)
+                        .requestMatchers(HttpMethod.POST, "/posts","/posts/**").authenticated() // All authenticated users can create posts and perform post-related actions (like, comment, repost)
                         .anyRequest().authenticated() // All other requests require authentication, for the Post class' PUT and DELETE request, the user's authentication details need to match the
                                                       // creator of the post's authentication details as coded in those requests' methods
                 );
