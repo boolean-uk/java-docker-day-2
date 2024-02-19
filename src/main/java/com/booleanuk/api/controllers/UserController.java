@@ -44,6 +44,13 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Response<?>> create(@RequestBody User user){
         today = LocalDateTime.now();
+
+        if (this.userRepository.findByUsername(user.getUsername()).isPresent()){
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.set("Username is taken");
+            return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        }
+
         if (user.getUsername() == null ||
         user.getName() == null ||
         user.getEmail() == null){
