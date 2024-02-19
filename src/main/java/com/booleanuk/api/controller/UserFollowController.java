@@ -38,7 +38,7 @@ public class UserFollowController {
         return ResponseEntity.ok(userFollowListResponse);
     }
 
-    @GetMapping("/following/{userId}")
+    @GetMapping("/followers/{userId}")
     public ResponseEntity<Response<?>> getNumberOfFollowers(@PathVariable int followId) {
         int followers = this.repository.findAmountOfFollowers(followId);
         StringResponse stringResponse = new StringResponse();
@@ -46,7 +46,7 @@ public class UserFollowController {
         return ResponseEntity.ok(stringResponse);
     }
 
-    @GetMapping("/followers/{userId}")
+    @GetMapping("/following/{userId}")
     public ResponseEntity<Response<?>> getNumberOfFollowing(@PathVariable int userId) {
         int followers = this.repository.findAmountOfFollowing(userId);
         StringResponse stringResponse = new StringResponse();
