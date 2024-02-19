@@ -1,5 +1,7 @@
 package com.booleanuk.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +19,11 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIncludeProperties(value = {"id", "username"})
+    private User user;
+
     @Column
     private String content;
 
@@ -24,7 +31,7 @@ public class Post {
     private LocalDateTime postedAt;
 
     @Column
-    private LocalDateTime updatedAT;
+    private LocalDateTime updatedAt;
 
     public Post(String content) {
         this.content = content;

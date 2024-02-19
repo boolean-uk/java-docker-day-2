@@ -1,0 +1,297 @@
+openapi: 3.0.3
+info:
+  title: Docker day 2 - Extension Criteria
+  description: Extension
+  version: 1.0.0
+  contact:
+    name: Docker day 2
+
+servers:
+  - url: http://localhost:4000
+tags:
+  - name: posts
+paths:
+  /posts:
+    get:
+      tags:
+        - posts
+      summary: Get all posts
+      description: Get a list of all posts
+      operationId: GetPosts
+      responses:
+        '200':
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllPosts'
+  /posts/{id}:
+    get:
+      tags:
+        - posts
+      summary: Get a post
+      description: Get a post by id
+      operationId: GetPost
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the post to get
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully returned post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+        '404':
+          description: No post with that ID found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /posts/user/{id}:
+    post:
+      tags:
+        - posts
+      summary: Create a post
+      description: Create a new post with course information included
+      operationId: CreatePost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the user to create a post for
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Successfully created post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+        '400':
+          description: Bad request, please check all fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Not able to post on someone else page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+    get:
+      tags:
+        - posts
+      summary: Get a list of posts
+      description: Get a list of posts by a user
+      operationId: GetPosts
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the user to get the posts for
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully returned posts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllPosts'
+        '404':
+          description: No user with that ID found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /posts/user/{user_id}/post/{post_id}:
+    put:
+      tags:
+        - posts
+      summary: Update a post
+      description: Update a post, only the fields present in the request gets changed
+      operationId: updatePost
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the post to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        '201':
+          description: Successfully updated post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+        '404':
+          description: No post with that ID found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '400':
+          description: Bad request, please check all fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+    delete:
+      tags:
+        - posts
+      summary: Delete a post
+      description: Delete a post by the id
+      operationId: deletePost
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the post to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully deleted post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResponse'
+        '404':
+          description: No post with that ID found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+
+components:
+  schemas:
+    CreatePost:
+      type: object
+      required: [content]
+      properties:
+        content:
+          type: string
+          example: "My first post"
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        content:
+          type: string
+          example: "My first post"
+        user:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            username:
+              type: string
+              example: "marit"
+        postedAt:
+          type: string
+          format: LocalDateTime
+          example: "2024-02-19T11:54:46.535678"
+        updatedAt:
+          type: string
+          format: LocalDateTime
+          example: "2024-02-19T11:54:46.535678"
+    PostResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            content:
+              type: string
+              example: "My first post"
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                username:
+                  type: string
+                  example: "marit"
+            postedAt:
+              type: string
+              format: LocalDateTime
+              example: "2024-02-19T11:54:46.535678"
+            updatedAt:
+              type: string
+              format: LocalDateTime
+              example: "2024-02-19T11:54:46.535678"
+    AllPosts:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "success"
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+
+    Error400:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "The post needs content"
+    Error404:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "No post with that id found"
+    Error401:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "You are only allowed to create/update/delete posts on your own page"
