@@ -1,6 +1,6 @@
 services:
   app:
-    image: 'enocks-docker1-net:latest'
+    image: 'dockerday2:latest'
     container_name: app
     depends_on:
       - db
