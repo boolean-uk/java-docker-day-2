@@ -8,6 +8,8 @@ import com.booleanuk.api.model.User;
 import com.booleanuk.api.repository.PostRepository;
 import com.booleanuk.api.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name = "Users", description = "Users API")
 public class UserController {
 
     @Autowired
@@ -32,6 +35,7 @@ public class UserController {
     private ModelMapper modelMapper;
 
     @GetMapping
+    @Operation(summary = "Get all users")
     public ResponseEntity<List<UserAllDTO>> getAll() {
         List<User> users = this.userRepository.findAll();
         List<UserAllDTO> userAllDTOS = new ArrayList<>();
@@ -43,6 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get user by id")
     public ResponseEntity<UserAllDTO> getById(@PathVariable int id) {
         return this.userRepository.findById(id)
                 .map(user -> new ResponseEntity<>(modelMapper.map(user, UserAllDTO.class), HttpStatus.OK))
@@ -50,11 +55,13 @@ public class UserController {
     }
 
     @PostMapping
+    @Operation(summary = "Create user")
     public ResponseEntity<User> create(@RequestBody User user) {
         return new ResponseEntity<>(this.userRepository.save(user), HttpStatus.CREATED);
     }
 
     @PostMapping("/{id}/follow/{followedId}")
+    @Operation(summary = "Follow user")
     public ResponseEntity<UserSingleDTO> follow(@PathVariable int id, @PathVariable int followedId) {
         User follower = this.userRepository
                 .findById(id)
@@ -67,6 +74,7 @@ public class UserController {
         return new ResponseEntity<>(modelMapper.map(follower, UserSingleDTO.class), HttpStatus.OK);
     }
     @PostMapping("/{id}/unfollow/{followedId}")
+    @Operation(summary = "Unfollow user")
     public ResponseEntity<UserSingleDTO> unfollow(@PathVariable int id, @PathVariable int followedId) {
         User follower = this.userRepository
                 .findById(id)
@@ -80,6 +88,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/repost/{postId}")
+    @Operation(summary = "Repost post")
     public ResponseEntity<UserSingleDTO> repost(@PathVariable int id, @PathVariable int postId) {
         User user = this.userRepository
                 .findById(id)
@@ -92,6 +101,7 @@ public class UserController {
 
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update user")
     public ResponseEntity<User> update(@PathVariable int id, @RequestBody User user) {
         User userToUpdate = this.userRepository
                 .findById(id)
@@ -102,6 +112,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete user")
     public ResponseEntity<User> delete(@PathVariable int id) {
         User userToDelete = this.userRepository
                 .findById(id)
