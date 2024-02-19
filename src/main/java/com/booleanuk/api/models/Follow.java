@@ -13,16 +13,16 @@ public class Follow {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private User follower;
+    //private User follower;
 
-    private User follows;
+    //private User follows;
 
     public Follow(int id) {
         this.id = id;
     }
 
-    public Follow(User follower, User follows) {
-        this.follower = follower;
-        this.follows = follows;
-    }
+    //public Follow(User follower, User follows) {
+    //    this.follower = follower;
+    //    this.follows = follows;
+    //}
 }

@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -28,5 +30,21 @@ public class UserController {
     @PostMapping
     public ResponseEntity<ApiResponse<?>> createUser(@RequestBody User user) {
         return HelperUtils.createdRequest(this.userRepository.save(user));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable int id) {
+        Optional<User> userOptional = this.userRepository.findById(id);
+        if (userOptional.isPresent()) {
+
+            this.userRepository.deleteById(id);
+
+            userOptional.get().setPosts(new ArrayList<>());
+            userOptional.get().setComments(new ArrayList<>());
+
+            return HelperUtils.okRequest(userOptional);
+        } else {
+            return HelperUtils.badRequest(new ApiResponse.Message("NO"));
+        }
     }
 }

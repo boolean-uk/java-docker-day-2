@@ -14,7 +14,9 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "user")
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIncludeProperties(value = {"username"})
     private User user;
 
     @ManyToOne
