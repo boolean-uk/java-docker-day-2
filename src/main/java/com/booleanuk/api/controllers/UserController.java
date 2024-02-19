@@ -14,12 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@RestController
+@RequestMapping("users")
 public class UserController {
     @Autowired
     private UserRepository repo;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody User user){
+    public ResponseEntity<User> create(@RequestBody User user){
         user.setPosts(new ArrayList<>());
         user.setInteractions(new ArrayList<>());
         user.setCreatedAt(nowFormatted());

@@ -36,7 +36,7 @@ public class Post {
     private String createdAt;
 
     @Column
-    private String updatedAt;
+    private String updateAt;
 
     public Post(String content){
         setContent(content);
