@@ -1,13 +1,10 @@
 package com.booleanuk.api.controllers;
 
-import com.booleanuk.api.models.ERole;
-import com.booleanuk.api.models.Role;
 import com.booleanuk.api.models.User;
 import com.booleanuk.api.payload.request.LoginRequest;
 import com.booleanuk.api.payload.request.SignupRequest;
 import com.booleanuk.api.payload.response.JwtResponse;
 import com.booleanuk.api.payload.response.MessageResponse;
-import com.booleanuk.api.repository.RoleRepository;
 import com.booleanuk.api.repository.UserRepository;
 import com.booleanuk.api.security.jwt.JwtUtils;
 import com.booleanuk.api.security.services.UserDetailsImpl;
@@ -21,11 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("auth")
@@ -35,9 +27,6 @@ public class AuthController {
 
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
 
     @Autowired
     PasswordEncoder encoder;
@@ -54,10 +43,9 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream().map((item) -> item.getAuthority())
-                .collect(Collectors.toList());
+
         return ResponseEntity
-                .ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
+                .ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail()));
     }
 
     @PostMapping("/signup")
@@ -70,27 +58,7 @@ public class AuthController {
         }
         // Create a new user add salt here if using one
         User user = new User(signupRequest.getUsername(), signupRequest.getEmail(), encoder.encode(signupRequest.getPassword()));
-        Set<String> strRoles = signupRequest.getRole();
-        Set<Role> roles = new HashSet<>();
 
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER).orElseThrow(() -> new RuntimeException("Error: Role is not found"));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach((role) -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role is not found"));
-                        roles.add(adminRole);
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER).orElseThrow(() -> new RuntimeException("Error: Role is not found"));
-                        roles.add(userRole);
-                        break;
-                }
-            });
-        }
-        user.setRoles(roles);
         userRepository.save(user);
         return ResponseEntity.ok((new MessageResponse("User registered successfully")));
     }
