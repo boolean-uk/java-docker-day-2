@@ -26,6 +26,7 @@ dependencies {
 	implementation 'org.postgresql:postgresql:42.6.0'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.modelmapper:modelmapper:3.0.0'
 }
 
 tasks.named('test') {
