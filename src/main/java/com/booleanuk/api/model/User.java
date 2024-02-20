@@ -46,6 +46,10 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
+    private List<Post> posts;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<UserFollow> userFollows;
 
     @OneToMany(mappedBy = "follow")

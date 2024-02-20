@@ -8,6 +8,7 @@ import com.booleanuk.api.payload.response.PostResponse;
 import com.booleanuk.api.payload.response.Response;
 import com.booleanuk.api.repository.PostRepository;
 import com.booleanuk.api.repository.UserRepository;
+import com.booleanuk.api.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,9 @@ public class PostController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    JwtUtils jwtUtils;
+
     @GetMapping("/{postId}")
     public ResponseEntity<Response<?>> getPost(@PathVariable int postId) {
         Post post = this.repository.findById(postId).orElse(null);
@@ -37,6 +41,51 @@ public class PostController {
         return ResponseEntity.ok(postResponse);
     }
 
+    @GetMapping
+    public ResponseEntity<Response<?>> getPosts(@RequestHeader (name="Authorization") String token) {
+        return this.getPostsForUser(this.getUserIdFromToken(token));
+    }
+
+    @PostMapping
+    public ResponseEntity<Response<?>> create(@RequestBody Post post, @RequestHeader (name="Authorization") String token) {
+        return this.createPostForUser(this.getUserIdFromToken(token), post);
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Response<?>> delete(@PathVariable int postId, @RequestHeader (name="Authorization") String token) {
+        User user = this.getUserFromToken(token);
+        if (user == null) {
+            ErrorResponse error = new ErrorResponse();
+            error.set("not found");
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+        // Checks if logged in user is owner of post
+        if (user.getPosts().stream().anyMatch(x -> x.getId() == postId)) {
+            ErrorResponse error = new ErrorResponse();
+            error.set("bad request");
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        return this.deletePostForUser(postId);
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<Response<?>> update(@PathVariable int postId, @RequestBody Post post, @RequestHeader (name="Authorization") String token) {
+        User user = this.getUserFromToken(token);
+        if (user == null) {
+            ErrorResponse error = new ErrorResponse();
+            error.set("not found");
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+        // Checks if logged in user is owner of post
+        if (user.getPosts().stream().anyMatch(x -> x.getId() == postId)) {
+            ErrorResponse error = new ErrorResponse();
+            error.set("bad request");
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        return this.updatePostForUser(postId, post);
+    }
+
+    // All down from here only available to ADMINs
     @GetMapping("/users/{userId}")
     public ResponseEntity<Response<?>> getPostsForUser(@PathVariable int userId) {
         List<Post> posts = this.repository.findByUserId(userId).orElse(null);
@@ -50,7 +99,7 @@ public class PostController {
         return ResponseEntity.ok(postListResponse);
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping("/users/{userId}")
     public ResponseEntity<Response<?>> createPostForUser(@PathVariable int userId, @RequestBody Post post) {
         PostResponse postResponse = new PostResponse();
         User user = this.userRepository.findById(userId).orElse(null);
@@ -70,7 +119,7 @@ public class PostController {
         return new ResponseEntity<>(postResponse, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/users/{postId}")
     public ResponseEntity<Response<?>> deletePostForUser(@PathVariable int postId) {
         Post postToDelete = this.repository.findById(postId).orElse(null);
         if (postToDelete == null) {
@@ -84,7 +133,7 @@ public class PostController {
         return ResponseEntity.ok(postResponse);
     }
 
-    @PutMapping("/{postId}")
+    @PutMapping("/users/{postId}")
     public ResponseEntity<Response<?>> updatePostForUser(@PathVariable int postId, @RequestBody Post post) {
         Post postToUpdate = this.repository.findById(postId).orElse(null);
         if (postToUpdate == null) {
@@ -106,5 +155,19 @@ public class PostController {
         PostResponse postResponse = new PostResponse();
         postResponse.set(postToUpdate);
         return ResponseEntity.ok(postResponse);
+    }
+
+    public int getUserIdFromToken(String token) {
+        String username = this.jwtUtils.getUserNameFromJwtToken(token.substring(7));
+        User user = this.userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return -1;
+        }
+        return user.getId();
+    }
+
+    public User getUserFromToken(String token) {
+        String username = this.jwtUtils.getUserNameFromJwtToken(token.substring(7));
+        return this.userRepository.findByUsername(username).orElse(null);
     }
 }

@@ -6,6 +6,7 @@ import com.booleanuk.api.model.UserFollow;
 import com.booleanuk.api.payload.response.*;
 import com.booleanuk.api.repository.UserFollowRepository;
 import com.booleanuk.api.repository.UserRepository;
+import com.booleanuk.api.security.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,9 @@ public class UserFollowController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     @GetMapping("/followers/list/{followId}")
     public ResponseEntity<Response<?>> getFollowers(@PathVariable int followId) {
@@ -54,6 +58,17 @@ public class UserFollowController {
         return ResponseEntity.ok(stringResponse);
     }
 
+    @PostMapping("/{followId}")
+    public ResponseEntity<Response<?>> followUser(@PathVariable int followId, @RequestHeader (name="Authorization") String token) {
+        return this.followUserForUser(this.getUserIdFromToken(token), followId);
+    }
+
+    @DeleteMapping("/{followId}")
+    public ResponseEntity<Response<?>> unfollowUser(@PathVariable int followId, @RequestHeader (name="Authorization") String token) {
+        return this.unfollowUserForUser(this.getUserIdFromToken(token), followId);
+    }
+
+    // All down from here only available to ADMINs
     @PostMapping("/{followId}/users/{userId}")
     public ResponseEntity<Response<?>> followUserForUser(@PathVariable int userId, @PathVariable int followId) {
         User user = this.userRepository.findById(userId).orElse(null);
@@ -93,5 +108,14 @@ public class UserFollowController {
         UserFollowResponse userFollowResponse = new UserFollowResponse();
         userFollowResponse.set(userFollowToDelete);
         return ResponseEntity.ok(userFollowResponse);
+    }
+
+    public int getUserIdFromToken(String token) {
+        String username = this.jwtUtils.getUserNameFromJwtToken(token.substring(7));
+        User user = this.userRepository.findByUsername(username).orElse(null);
+        if (user == null) {
+            return -1;
+        }
+        return user.getId();
     }
 }

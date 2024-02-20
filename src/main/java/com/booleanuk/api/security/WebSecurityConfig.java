@@ -58,8 +58,16 @@ public class WebSecurityConfig {
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/auth/**").permitAll()
-                        //.requestMatchers("/borrow", "/borrow/history", "/borrow/items/*").hasRole("USER")
-                        //.requestMatchers("/items", "/items/**", "/borrow/users/**", "/borrow/history/**").hasRole("ADMIN")
+                        .requestMatchers("/posts","/posts/*").hasRole("USER")
+                        .requestMatchers("/likes/posts", "/likes/posts/*").hasRole("USER")
+                        .requestMatchers("/reposts/posts", "/reposts/posts/*").hasRole("USER")
+                        .requestMatchers("/follows/followers/**", "/follows/following/**").hasRole("USER")
+                        .requestMatchers("/follows/*").hasRole("USER")
+
+                        .requestMatchers("/posts/users", "/posts/users/**").hasRole("ADMIN")
+                        .requestMatchers("/likes/posts/*/**").hasRole("ADMIN")
+                        .requestMatchers("/reposts/posts/*/**").hasRole("ADMIN")
+                        .requestMatchers("/follows/*/users/**").hasRole("ADMIN")
                 );
         http.authenticationProvider(this.authenticationProvider());
         http.addFilterBefore(this.authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
