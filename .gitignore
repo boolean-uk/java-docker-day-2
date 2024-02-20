@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### For using elephantSQL for faster response during development ###
-application.yml
+java.docker.day.2-0.0.1.jar
