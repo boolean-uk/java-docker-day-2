@@ -60,7 +60,7 @@ public class PostController {
             return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
         // Checks if logged in user is owner of post
-        if (user.getPosts().stream().anyMatch(x -> x.getId() == postId)) {
+        if (user.getPosts().stream().noneMatch(x -> x.getId() == postId)) {
             ErrorResponse error = new ErrorResponse();
             error.set("bad request");
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
@@ -77,7 +77,7 @@ public class PostController {
             return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
         // Checks if logged in user is owner of post
-        if (user.getPosts().stream().anyMatch(x -> x.getId() == postId)) {
+        if (user.getPosts().stream().noneMatch(x -> x.getId() == postId)) {
             ErrorResponse error = new ErrorResponse();
             error.set("bad request");
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
