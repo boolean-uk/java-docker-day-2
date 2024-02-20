@@ -42,7 +42,7 @@ public class UserFollowController {
         return ResponseEntity.ok(userFollowListResponse);
     }
 
-    @GetMapping("/followers/{userId}")
+    @GetMapping("/followers/{followId}")
     public ResponseEntity<Response<?>> getNumberOfFollowers(@PathVariable int followId) {
         int followers = this.repository.findAmountOfFollowers(followId);
         StringResponse stringResponse = new StringResponse();
@@ -93,7 +93,7 @@ public class UserFollowController {
             error.set("Bad request");
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
-        return null;
+        return new ResponseEntity<>(userFollowResponse, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{followId}/users/{userId}")
