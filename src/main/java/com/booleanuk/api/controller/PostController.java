@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @RestController
@@ -33,9 +34,12 @@ public class PostController {
         checkValidInput(user);
 
         Post post1 = new Post(post.getContent(), DateCreater.getCurrentDate(), DateCreater.getCurrentDate(), user);
-
+        if(post1.getLikes() == null || post1.getLikes().isEmpty()) {
+            post1.setLikes(new ArrayList<>());
+        }
         checkValidInput(post1);
-        this.postRepository.save(post);
+        this.postRepository.save(post1);
+
 
         return new ResponseEntity<>(new SuccessResponse(post1), HttpStatus.CREATED);
     }
@@ -87,7 +91,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Response<?>> deleteUser(@PathVariable (name = "id") int id, @PathVariable (name = "postId") int postId) {
+    public ResponseEntity<Response<?>> deletePost(@PathVariable (name = "id") int id, @PathVariable (name = "postId") int postId) {
         User user = this.getAUser(id);
         Post post = user.getPosts().get(postId);
 
@@ -98,6 +102,42 @@ public class PostController {
 
         return new ResponseEntity<>(new SuccessResponse(post), HttpStatus.OK);
 
+    }
+
+
+    @GetMapping("/getAllPosts")
+    public ResponseEntity<List<Post>> getAllPosts(@PathVariable (name = "id") int id) {
+
+        List<Post> posts = this.postRepository.findAll();
+        System.out.println(posts.get(0).getLikes());
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+
+    @PutMapping("/getAllPosts/{postId}/like")
+    public ResponseEntity<Response<?>> likePost(@PathVariable (name = "id") int id, @PathVariable (name = "postId") int postId) {
+        User user = this.getAUser(id);
+        Post post = this.getAPost(postId);
+
+        this.checkValidInput(user);
+        this.checkValidInput(post);
+
+        if(user.getPostsList() == null) {
+            user.setPostsList(new ArrayList<>());
+        }
+
+        if(post.getLikes() == null) {
+            post.setLikes(new ArrayList<>());
+        }
+
+        post.getLikes().add(user);
+        user.getPostsList().add(post);
+
+        this.postRepository.save(post);
+        this.userRepository.save(user);
+
+
+        return new ResponseEntity<>(new SuccessResponse(post), HttpStatus.CREATED);
     }
 
 
@@ -117,7 +157,7 @@ public class PostController {
     }
 
     private void checkValidInput(User user) {
-        if(user.getCreatedAt() == null || user.getName() == null || user.getUpdatedAt() == null) {
+        if(user.getCreatedAt() == null || user.getUsername() == null || user.getUpdatedAt() == null || user.getEmail() == null || user.getPassword() == null) {
             throw new CustomParamaterConstraintException("Bad request");
         }
     }

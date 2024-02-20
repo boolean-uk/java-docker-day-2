@@ -23,16 +23,16 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @PostMapping
+/*    @PostMapping
     public ResponseEntity<Response<?>> createUser(@RequestBody User user) {
 
-        User user1 = new User(user.getName(), DateCreater.getCurrentDate(), DateCreater.getCurrentDate());
+        User user1 = new User(user.getUsername(), user.getEmail(), user.getPassword());
         checkValidInput(user1);
 
         this.userRepository.save(user1);
 
         return new ResponseEntity<>(new SuccessResponse(user1), HttpStatus.CREATED);
-    }
+    }*/
 
 
     @GetMapping
@@ -51,10 +51,12 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Response<?>> updateUser(@PathVariable (name = "id") int id, @RequestBody User library) {
+    public ResponseEntity<Response<?>> updateUser(@PathVariable (name = "id") int id, @RequestBody User user) {
         User user1 = getAUser(id);
         user1.setUpdatedAt(DateCreater.getCurrentDate());
-        user1.setName(library.getName());
+        user1.setUsername(user.getUsername());
+        user1.setEmail(user.getEmail());
+        user1.setPassword(user.getPassword());
 
 
         this.checkValidInput(user1);
@@ -81,7 +83,7 @@ public class UserController {
 
 
     private void checkValidInput(User user) {
-        if(user.getCreatedAt() == null || user.getName() == null || user.getUpdatedAt() == null) {
+        if(user.getCreatedAt() == null || user.getUsername() == null || user.getUpdatedAt() == null || user.getEmail() == null || user.getPassword() == null) {
             throw new CustomParamaterConstraintException("Bad request");
         }
     }
