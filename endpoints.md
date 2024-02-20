@@ -184,3 +184,14 @@
 - **Access:** PUBLIC
 - **Description:** Register a new user.
 
+### Add roles
+- **Endpoint:** `/auth/addroles`
+- **Method:** `POST`
+- **Access:** PUBLIC
+- **Description:** Add the roles to the db if not already added.
+
+### Set role Admin
+- **Endpoint:** `/auth/addadmin/{userId}`
+- **Method:** `POST`
+- **Access:** PUBLIC
+- **Description:** Add the ADMIN role to a specific user.
