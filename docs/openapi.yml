@@ -1,0 +1,633 @@
+openapi: 3.1.0
+info:
+  title: Java API Exercise - Core + Extension Criteria
+  version: 0.1.0
+
+servers:
+  - url: http://localhost:4000
+tags:
+  - name: users
+  - name: posts
+  - name: comments
+  - name: upvotes
+  - name: reposts
+  - name: friendships
+
+paths:
+  /users:
+    post:
+      tags:
+        - users
+      summary: Create a user
+      description: Endpoint to create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{id}:
+    get:
+      tags:
+        - users
+      summary: Get a user by ID
+      description: Endpoint to retrieve a user by ID
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the user to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    put:
+      tags:
+        - users
+      summary: Update a user
+      description: Endpoint to update an existing user
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the user to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '201':
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags:
+        - users
+      summary: Delete a user
+      description: Endpoint to delete a user by ID
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the user to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{userId}/posts:
+    get:
+      tags:
+        - users
+      summary: Get all posts by user ID
+      description: Endpoint to retrieve all posts by user ID
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the user to retrieve posts for
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of posts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+    post:
+      tags:
+        - users
+      summary: Create a post by user ID
+      description: Endpoint to create a new post by a specific user
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the user who creates the post
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        '201':
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+  /posts/{id}:
+    get:
+      tags:
+        - posts
+      summary: Get a post by ID
+      description: Endpoint to retrieve a post by ID
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the post to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    put:
+      tags:
+        - posts
+      summary: Update a post
+      description: Endpoint to update an existing post
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the post to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        '201':
+          description: Post updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    delete:
+      tags:
+        - posts
+      summary: Delete a post
+      description: Endpoint to delete a post by ID
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the post to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+
+  /comments:
+    post:
+      tags:
+        - comments
+      summary: Create a comment
+      description: Endpoint to create a new comment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateComment'
+      responses:
+        '201':
+          description: Comment created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+  /comments/{id}:
+    get:
+      tags:
+        - comments
+      summary: Get a comment by ID
+      description: Endpoint to retrieve a comment by ID
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the comment to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Comment retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+    put:
+      tags:
+        - comments
+      summary: Update a comment
+      description: Endpoint to update an existing comment
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the comment to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateComment'
+      responses:
+        '201':
+          description: Comment updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+    delete:
+      tags:
+        - comments
+      summary: Delete a comment
+      description: Endpoint to delete a comment by ID
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the comment to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Comment deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+
+  /upvotes:
+    post:
+      tags:
+        - upvotes
+      summary: Create an upvote
+      description: Endpoint to create a new upvote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpvote'
+      responses:
+        '201':
+          description: Upvote created successfully
+
+  /upvotes/{postId}:
+    get:
+      tags:
+        - upvotes
+      summary: Get all upvotes by post ID
+      description: Endpoint to retrieve all upvotes by post ID
+      parameters:
+        - name: postId
+          in: path
+          description: The ID of the post to retrieve upvotes for
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of upvotes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Upvote'
+    delete:
+      tags:
+        - upvotes
+      summary: Delete an upvote
+      description: Endpoint to delete an upvote by ID
+      parameters:
+        - name: postId
+          in: path
+          description: The ID of the upvote to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Upvote deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Upvote'
+
+  /reposts:
+    post:
+      tags:
+        - reposts
+      summary: Create a repost
+      description: Endpoint to create a new repost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRepost'
+      responses:
+        '201':
+          description: Repost created successfully
+
+  /reposts/{postId}:
+    get:
+      tags:
+        - reposts
+      summary: Get all reposts by post ID
+      description: Endpoint to retrieve all reposts by post ID
+      parameters:
+        - name: postId
+          in: path
+          description: The ID of the post to retrieve reposts for
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of reposts retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Repost'
+    delete:
+      tags:
+        - reposts
+      summary: Delete a repost
+      description: Endpoint to delete a repost by ID
+      parameters:
+        - name: postId
+          in: path
+          description: The ID of the repost to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Repost deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Repost'
+
+  /friendships:
+    post:
+      tags:
+        - friendships
+      summary: Create a friendship
+      description: Endpoint to create a new friendship
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFriendship'
+      responses:
+        '201':
+          description: Friendship created successfully
+
+  /friendships/{userId}:
+    get:
+      tags:
+        - friendships
+      summary: Get all friendships by user ID
+      description: Endpoint to retrieve all friendships by user ID
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the user to retrieve friendships for
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of friendships retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Friendship'
+    delete:
+      tags:
+        - friendships
+      summary: Delete a friendship
+      description: Endpoint to delete a friendship by ID
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the friendship to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Friendship deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Friendship'
+
+components:
+  schemas:
+    CreateUser:
+      type: object
+      required: [userName, email]
+      properties:
+        userName:
+          type: string
+          example: john_doe
+        email:
+          type: string
+          example: john@example.com
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        userName:
+          type: string
+          example: john_doe
+        email:
+          type: string
+          example: john@example.com
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-02-16T11:01:56Z'
+    CreatePost:
+      type: object
+      required: [content, userId]
+      properties:
+        content:
+          type: string
+          example: This is a post content.
+        userId:
+          type: integer
+          example: 1
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        content:
+          type: string
+          example: This is a post content.
+        userId:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-02-16T11:01:56Z'
+        upvotes:
+          type: integer
+          example: 0
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+        reposts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Repost'
+    CreateComment:
+      type: object
+      required: [content, userId, postId]
+      properties:
+        content:
+          type: string
+          example: This is a comment content.
+        userId:
+          type: integer
+          example: 1
+        postId:
+          type: integer
+          example: 1
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        content:
+          type: string
+          example: This is a comment content.
+        userId:
+          type: integer
+          example: 1
+        postId:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-02-16T11:01:56Z'
+    CreateUpvote:
+      type: object
+      required: [userId, postId]
+      properties:
+        userId:
+          type: integer
+          example: 1
+        postId:
+          type: integer
+          example: 1
+    Upvote:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 1
+        postId:
+          type: integer
+          example: 1
+    CreateRepost:
+      type: object
+      required: [userId, postId, ogPostId]
+      properties:
+        userId:
+          type: integer
+          example: 1
+        postId:
+          type: integer
+          example: 1
+        ogPostId:
+          type: integer
+          example: 1
+    Repost:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 1
+        postId:
+          type: integer
+          example: 1
+        ogPostId:
+          type: integer
+          example: 1
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-02-16T11:01:56Z'
+    CreateFriendship:
+      type: object
+      required: [userId, friendId]
+      properties:
+        userId:
+          type: integer
+          example: 1
+        friendId:
+          type: integer
+          example: 2
+    Friendship:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 1
+        friendId:
+          type: integer
+          example: 2
