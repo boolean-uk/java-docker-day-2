@@ -5,6 +5,7 @@ import com.booleanuk.api.model.Role;
 import com.booleanuk.api.model.User;
 import com.booleanuk.api.payload.request.LoginRequest;
 import com.booleanuk.api.payload.request.SignupRequest;
+import com.booleanuk.api.payload.response.ErrorResponse;
 import com.booleanuk.api.payload.response.JwtResponse;
 import com.booleanuk.api.payload.response.MessageResponse;
 import com.booleanuk.api.repository.RoleRepository;
@@ -13,6 +14,7 @@ import com.booleanuk.api.security.jwt.JwtUtils;
 import com.booleanuk.api.security.services.UserDetailsImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -103,5 +105,36 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
+    }
+
+    @PostMapping("/addroles")
+    public ResponseEntity<?> fillRoles() {
+        if (!roleRepository.existsByName(ERole.ROLE_USER)) {
+            this.roleRepository.save(new Role(ERole.ROLE_USER));
+        }
+        if (!roleRepository.existsByName(ERole.ROLE_MODERATOR)) {
+            this.roleRepository.save(new Role(ERole.ROLE_MODERATOR));
+        }
+        if (!roleRepository.existsByName(ERole.ROLE_ADMIN)) {
+            this.roleRepository.save(new Role(ERole.ROLE_ADMIN));
+        }
+        return ResponseEntity.ok(new MessageResponse("Roles added to DB"));
+    }
+
+    @PostMapping("/addadmin/{userId}")
+    public ResponseEntity<?> fillRoles(@PathVariable int userId) {
+        User user = this.userRepository.findById(userId).orElse(null);
+        Role role = this.roleRepository.findByName(ERole.ROLE_ADMIN).orElse(null);
+        if (user == null || role == null) {
+            ErrorResponse error = new ErrorResponse();
+            error.set("not found");
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+        Set<Role> roles = user.getRoles();
+        roles.add(role);
+        user.setRoles(roles);
+        this.userRepository.save(user);
+
+        return ResponseEntity.ok(new MessageResponse("Admin role added to user"));
     }
 }
