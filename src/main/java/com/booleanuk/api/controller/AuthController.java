@@ -103,4 +103,18 @@ public class AuthController {
         this.userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully"));
     }
+
+    @PostMapping("/roles")
+    public ResponseEntity<?> addRolesToTable() {
+        if (!roleRepository.existsByName(ERole.ROLE_USER)) {
+            this.roleRepository.save(new Role(ERole.ROLE_USER));
+        }
+        if (!roleRepository.existsByName(ERole.ROLE_MODERATOR)) {
+            this.roleRepository.save(new Role(ERole.ROLE_MODERATOR));
+        }
+        if (!roleRepository.existsByName(ERole.ROLE_ADMIN)) {
+            this.roleRepository.save(new Role(ERole.ROLE_ADMIN));
+        }
+        return ResponseEntity.ok(new MessageResponse("Roles added to the database"));
+    }
 }

@@ -10,7 +10,60 @@ servers:
   - url: http://localhost:4000
 tags:
   - name: posts
+  - name: auth
 paths:
+  /auth/roles:
+    post:
+      tags:
+        - auth
+      summary: Add roles to database
+      description: Initial add roles to database to be able to register users
+      operationId: AddRoles
+      responses:
+        '200':
+          description: Successfully added roles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthRoles'
+  /auth/signup:
+    post:
+      tags:
+        - auth
+      summary: Signup
+      description: Make a new user
+      operationId: SignUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signup'
+      responses:
+        '200':
+          description: Successfully signed in as a user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupSuccess'
+  /auth/signin:
+    post:
+      tags:
+        - auth
+      summary: Signin by username and password
+      description: Signin by username and password
+      operationId: SignIn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signin'
+      responses:
+        '200':
+          description: Successfully signed in as a user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
   /posts:
     get:
       tags:
@@ -57,7 +110,7 @@ paths:
       tags:
         - posts
       summary: Create a post
-      description: Create a new post with course information included
+      description: Create a new post
       operationId: CreatePost
       requestBody:
         content:
@@ -90,12 +143,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '404':
+          description: No user with that ID found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404User'
     get:
       tags:
         - posts
       summary: Get a list of posts
       description: Get a list of posts by a user
-      operationId: GetPosts
+      operationId: GetPostsByUser
       parameters:
         - name: id
           in: path
@@ -115,16 +174,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
+                $ref: '#/components/schemas/Error404User'
   /posts/user/{user_id}/post/{post_id}:
     put:
       tags:
         - posts
       summary: Update a post
-      description: Update a post, only the fields present in the request gets changed
+      description: Update a post
       operationId: updatePost
       parameters:
-        - name: id
+        - name: user_id
+          in: path
+          description: The ID of the user to update a post for
+          required: true
+          schema:
+            type: integer
+        - name: post_id
           in: path
           description: The ID of the post to update
           required: true
@@ -143,7 +208,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PostResponse'
         '404':
-          description: No post with that ID found
+          description: No post or no user with that ID found
           content:
             application/json:
               schema:
@@ -154,6 +219,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
+        '401':
+          description: Not able to update on someone else page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
     delete:
       tags:
         - posts
@@ -161,9 +232,15 @@ paths:
       description: Delete a post by the id
       operationId: deletePost
       parameters:
-        - name: id
+        - name: user_id
           in: path
-          description: The ID of the post to delete
+          description: The ID of the user to update a post for
+          required: true
+          schema:
+            type: integer
+        - name: post_id
+          in: path
+          description: The ID of the post to update
           required: true
           schema:
             type: integer
@@ -175,14 +252,73 @@ paths:
               schema:
                 $ref: '#/components/schemas/PostResponse'
         '404':
-          description: No post with that ID found
+          description: No post or no user with that ID found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '401':
+          description: Not able to delete on someone else page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
 
 components:
   schemas:
+    AuthRoles:
+      type: string
+      example: "Roles added to the database"
+    SignupSuccess:
+      type: string
+      example: "User registered successfully"
+    Signup:
+      type: object
+      required: [username, email, password, role]
+      properties:
+        username:
+          type: string
+          example: "marit"
+        email:
+          type: string
+          example: "marit@boolean.com"
+        password:
+          type: string
+          example: "password"
+        role:
+          type: array
+          example:  ["user", "admin"]
+    Signin:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+          example: "marit"
+        password:
+          type: string
+          example: "password"
+    JwtResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtYXJpdF9yZWd1bGFyX3VzZXIiLCJpYXQiOjE3MDgzMzQwNTIsImV4cCI6MTcwODQyMDQ1Mn0.sk2s1TyQPUGdQjCw1MOxY-KlaELFXDd3slcCsrhSUJY"
+        type:
+          type: string
+          example: "Bearer"
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: "marit"
+        email:
+          type: string
+          example: "marit@boolean.com"
+        roles:
+          type: array
+          example:  ["ROLE_USER", "ROLE_ADMIN"]
     CreatePost:
       type: object
       required: [content]
@@ -283,6 +419,18 @@ components:
             message:
               type: string
               example: "No post with that id found"
+    Error404User:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "error"
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "No user with that id found"
     Error401:
       type: object
       properties:

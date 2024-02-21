@@ -1,6 +1,6 @@
 services:
   app:
-    image: 'docker-day-2-core-image:latest'
+    image: 'docker-day-2-extension-image:latest'
     container_name: app
     depends_on:
       - db
