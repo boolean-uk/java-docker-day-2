@@ -1,52 +1,91 @@
 openapi: 3.0.3
 info:
-  title: Java API Exercise - Core Criteria
-  description: |-
-  version: 0.2.2
+  title: Docker day 2 - Core Criteria
+  description: Core
+  version: 1.0.0
+  contact:
+    name: Docker day 2
 
 servers:
   - url: http://localhost:4000
 tags:
-  - name: examples
+  - name: posts
 paths:
-  /examples:
+  /posts:
     post:
       tags:
-        - examples
-      summary: Example POST route
-      description: Description of an example POST route
+        - posts
+      summary: Create a post
+      description: Create a new post
+      operationId: CreatePost
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateExample'
+              $ref: '#/components/schemas/CreatePost'
       responses:
-        201:
+        '201':
+          description: Successfully created post
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/Post'
+        '400':
+          description: Bad request, please check all fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
     get:
       tags:
-        - examples
-      summary: Example GET route
-      description: Description of an example GET route
+        - posts
+      summary: Get all posts
+      description: Get a list of all posts
+      operationId: GetPosts
       responses:
-        200:
+        '200':
+          description: List of posts
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllExamples'
-  /examples/{id}:
-    put:
+                $ref: '#/components/schemas/AllPosts'
+  /posts/{id}:
+    get:
       tags:
-        - examples
-      summary: Example PUT route
-      description: Description of an example PUT route
+        - posts
+      summary: Get a post
+      description: Get a post by id
+      operationId: GetPost
       parameters:
         - name: id
           in: path
-          description: The ID of the example to update
+          description: The ID of the post to get
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully returened post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: No post with that ID found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+    put:
+      tags:
+        - posts
+      summary: Update a post
+      description: Update a post
+      operationId: updatePost
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the post to update
           required: true
           schema:
             type: integer
@@ -54,63 +93,87 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateExample'
+              $ref: '#/components/schemas/CreatePost'
       responses:
-        201:
+        '201':
+          description: Successfully updated post
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: No post with that ID found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '400':
+          description: Bad request, please check all fields are correct
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
     delete:
       tags:
-        - examples
-      summary: Example DELETE route
-      description: Description of an example DELETE route
+        - posts
+      summary: Delete a post
+      description: Delete a post by the id
+      operationId: deletePost
       parameters:
         - name: id
           in: path
-          description: The ID of the example to delete
+          description: The ID of the post to delete
           required: true
           schema:
             type: integer
       responses:
-        200:
+        '200':
+          description: Successfullt deleted post
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: No post with that ID found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
 
 components:
   schemas:
-    CreateExample:
+    CreatePost:
       type: object
-      required: [propertyOne, propertyTwo]
+      required: [content]
       properties:
-        propertyOne:
+        content:
           type: string
-          example: "Example Value"
-        propertyTwo:
-          type: email
-          format: email
-          example: "example@email.value"
-    Example:
+          example: "My first post"
+    Post:
       type: object
       properties:
         id:
           type: integer
           example: 1
-        propertyOne:
+        content:
           type: string
-          example: "Example Value"
-        propertyTwo:
+          example: "My first post"
+        postedAt:
           type: string
-          example: "example@email.value"
-        createdAt:
+          format: LocalDateTime
+          example: "2024-02-19T11:54:46.535678"
+        updatedAt:
           type: string
-          format: DateTime
-          pattern: YYYY-MM-DDTHH:MM:SS
-          example: 2023-03-14T11:01:56.633+00:00
-    AllExamples:
+          format: LocalDateTime
+          example: "2024-02-19T11:54:46.535678"
+    AllPosts:
       type: array
       items:
-        $ref: '#/components/schemas/Example'
+        $ref: '#/components/schemas/Post'
+
+    Error400:
+      type: string
+      example: "The post needs content"
+    Error404:
+      type: string
+      example: "No post with that id found"

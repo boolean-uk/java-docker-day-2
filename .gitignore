@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Personal ###
+java.docker.day.2-0.0.1.jar
+java.docker.day.2-0.0.2.jar
+application.yml
