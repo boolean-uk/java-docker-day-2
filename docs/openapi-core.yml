@@ -7,46 +7,107 @@ info:
 servers:
   - url: http://localhost:4000
 tags:
-  - name: examples
+  - name: users
+  - name: posts
+  - name: interactions
 paths:
-  /examples:
+  /interactions:
     post:
       tags:
-        - examples
-      summary: Example POST route
-      description: Description of an example POST route
+        - interactions
+      summary: Interaction POST route
+      description: Description of a interaction POST route
+      operationId: createInteraction
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateExample'
+              $ref: '#/components/schemas/CreateInteraction'
       responses:
-        201:
+        '201':
+          description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/Interaction'
     get:
       tags:
-        - examples
-      summary: Example GET route
-      description: Description of an example GET route
+        - interactions
+      summary: Interaction GET route
+      description: Description of a interaction GET route
+      operationId: getAllInteractions
       responses:
-        200:
+        '200':
+          description: Successful response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllExamples'
-  /examples/{id}:
-    put:
+                $ref: '#/components/schemas/AllInteractions'
+  /interactions/{id}:
+    delete:
       tags:
-        - examples
-      summary: Example PUT route
-      description: Description of an example PUT route
+        - interactions
+      summary: Interaction DELETE route
+      description: Description of a interaction DELETE route
+      operationId: deleteInteraction
       parameters:
         - name: id
           in: path
-          description: The ID of the example to update
+          description: The ID of the interaction to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Interaction'
+
+  /posts:
+    post:
+      tags:
+        - posts
+      summary: Post POST route
+      description: Description of a post POST route
+      operationId: createPost
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    get:
+      tags:
+        - posts
+      summary: Post GET route
+      description: Description of a post GET route
+      operationId: getAllPosts
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllPosts'
+  /posts/{id}:
+    put:
+      tags:
+        - posts
+      summary: Post PUT route
+      description: Description of a post PUT route
+      operationId: updatePost
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the post to update
           required: true
           schema:
             type: integer
@@ -54,63 +115,221 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateExample'
+              $ref: '#/components/schemas/CreatePost'
       responses:
-        201:
+        '201':
+          description: Updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/Post'
     delete:
       tags:
-        - examples
-      summary: Example DELETE route
-      description: Description of an example DELETE route
+        - posts
+      summary: Post DELETE route
+      description: Description of a post DELETE route
+      operationId: deletePost
       parameters:
         - name: id
           in: path
-          description: The ID of the example to delete
+          description: The ID of the post to delete
           required: true
           schema:
             type: integer
       responses:
-        200:
+        '200':
+          description: Deleted
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/Post'
+  /users:
+    post:
+      tags:
+        - users
+      summary: User POST route
+      description: Description of a user POST route
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    get:
+      tags:
+        - users
+      summary: User GET route
+      description: Description of a user GET route
+      operationId: getAllUsers
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllUsers'
+  /users/{id}:
+    put:
+      tags:
+        - users
+      summary: User PUT route
+      description: Description of a user PUT route
+      operationId: updateUser
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the user to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '201':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags:
+        - users
+      summary: User DELETE route
+      description: Description of a user DELETE route
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the user to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
 
 components:
   schemas:
-    CreateExample:
+    CreateInteraction:
       type: object
-      required: [propertyOne, propertyTwo]
+      required: [ type ]
       properties:
-        propertyOne:
+        type:
           type: string
-          example: "Example Value"
-        propertyTwo:
-          type: email
-          format: email
-          example: "example@email.value"
-    Example:
+          example: "Upvote"
+    Interaction:
       type: object
       properties:
         id:
           type: integer
           example: 1
-        propertyOne:
+        type:
           type: string
-          example: "Example Value"
-        propertyTwo:
+          example: "Upvote"
+        userid:
+          type: integer
+          example: 1
+        postid:
+          type: integer
+          example: 1
+        interactedAt:
           type: string
-          example: "example@email.value"
+          format: DateTime
+          example: 2024-02-19T15:30:45
+    AllInteractions:
+      type: array
+      items:
+        $ref: '#/components/schemas/Interaction'
+
+    CreatePost:
+      type: object
+      required: [ content ]
+      properties:
+        content:
+          type: string
+          example: "Eating doritos lol.."
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        content:
+          type: string
+          example: "Eating doritos lol.."
+        userid:
+          type: integer
+          example: 1
         createdAt:
           type: string
           format: DateTime
-          pattern: YYYY-MM-DDTHH:MM:SS
-          example: 2023-03-14T11:01:56.633+00:00
-    AllExamples:
+          example: 2024-02-19T15:30:45
+        updatedAt:
+          type: string
+          format: DateTime
+          example: 2024-02-19T15:30:45
+    AllPosts:
       type: array
       items:
-        $ref: '#/components/schemas/Example'
+        $ref: '#/components/schemas/Post'
+
+    CreateUser:
+      type: object
+      required: [ name, username, dob, phone ]
+      properties:
+        name:
+          type: string
+          example: "Johnny Rocket"
+        username:
+          type: string
+          example: "applelover234"
+        dob:
+          type: string
+          example: "02.02.02"
+        phone:
+          type: string
+          example: "49593392"
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Johnny Rocket"
+        username:
+          type: string
+          example: "applelover234"
+        dob:
+          type: string
+          example: "02.02.02"
+        phone:
+          type: string
+          example: "49593392"
+        createdAt:
+          type: string
+          format: DateTime
+          example: 2024-02-19T15:30:45
+        updatedAt:
+          type: string
+          format: DateTime
+          example: 2024-02-19T15:30:45
+    AllUsers:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
