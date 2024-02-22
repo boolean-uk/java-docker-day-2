@@ -5,3 +5,7 @@ server:
     include-binding-errors: always
     include-stacktrace: never
     include-exception: false
+booleanuk:
+  app:
+    jwtSecret: ===============================BooleanUK=Spring==============================================
+    jwtExpirationMs: 86400000
