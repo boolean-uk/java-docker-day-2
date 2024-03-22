@@ -1,26 +1,27 @@
 package com.booleanuk.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 
 @Entity
-@Table(name = "students")
+@Table(name = "users")
 public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
+    @Column(name = "message")
     private String message;
 
 //    @Column
@@ -30,16 +31,23 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIncludeProperties(value = {"id", "name", "email", "phone"})
-    private User user;
+    @JsonIgnore
+//    @JsonIncludeProperties(value = {"id", "name", "email", "phone"})
 
-    public Post(String message) {
+
+    private com.booleanuk.api.model.User user;
+
+    public Post(String message, User user) {
         this.message = message;
+        this.user = user;
 
 //        this.createdAt = LocalDateTime.now();
 //        this.updatedAt = LocalDateTime.now();
     }
 
+    public Post(int id) {
+        this.id = id;
+    }
 
 
 

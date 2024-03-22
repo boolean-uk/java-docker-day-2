@@ -1,59 +1,58 @@
 package com.booleanuk.api.model;
 
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-
+@Data
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username"),
+                @UniqueConstraint(columnNames = "email")
+        })
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
-    @Column
-    private String name;
+    @NotBlank
+    @Size(max = 20)
+    private String username;
 
-    @Column
+    @NotBlank
+    @Size(max = 50)
+    @Email
     private String email;
 
-    @Column
-    private String phone;
-
-//    @Column
-//    private LocalDateTime createdAt;
-//    @Column
-//    private LocalDateTime updatedAt;
-
     @OneToMany(mappedBy = "user")
-    @JsonIncludeProperties(value = {"id","name", "email", "phone"})
+    @JsonIgnore
     private List<Post> posts;
 
-    public User(String name, String email, String phone) {
-        this.name = name;
+    public User(String username, String email) {
+        this.username = username;
         this.email = email;
-        this.phone = phone;
-//        this.createdAt = LocalDateTime.now();
-//        this.updatedAt = LocalDateTime.now();
     }
-
-    public User(Integer id) {
+    public User(String username, String email, List<Post> posts) {
+        this.username = username;
+        this.email = email;
+        this.posts = posts;
+    }
+    public User(int id) {
         this.id = id;
     }
-
-//    public void updateUser() {
-//        this.updatedAt = LocalDateTime.now();
-//    }
 
 }
