@@ -39,8 +39,6 @@ out/
 ##Personal
 src/main/resources/application.yml
 
-src/dockeriser
-src/dockerizer/*
 
 
 
