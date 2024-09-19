@@ -26,6 +26,10 @@ dependencies {
 	implementation 'org.postgresql:postgresql:42.6.0'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// https://mvnrepository.com/artifact/at.favre.lib/bcrypt
+	implementation group: 'at.favre.lib', name: 'bcrypt', version: '0.10.2'
+
 }
 
 tasks.named('test') {
