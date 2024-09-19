@@ -117,13 +117,13 @@ public class UserController {
 
         // Add blogpost to user
         user.getBlogPosts().add(blogpost);
-        try {
-            this.userRepository.save(user);
-        } catch (Exception e) {
-            ErrorResponse error = new ErrorResponse();
-            error.set("Bad request");
-            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-        }
+//        try {
+//            this.userRepository.save(user);
+//        } catch (Exception e) {
+//            ErrorResponse error = new ErrorResponse();
+//            error.set("Bad request");
+//            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+//        }
 
         UserResponse response = new UserResponse();
         response.set(user);

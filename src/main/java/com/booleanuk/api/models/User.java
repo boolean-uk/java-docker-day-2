@@ -24,20 +24,24 @@ public class User {
     private String username;
 
 
-    @OneToMany
-    @JoinTable(
-            name = "user_blogpost",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "blogpost_id")
-    )
+//    @OneToMany
+//    @JoinTable(
+//            name = "user_blogpost",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "blogpost_id")
+//    )
+//    private List<BlogPost> blogPosts = new ArrayList<>();
+    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BlogPost> blogPosts = new ArrayList<>();
 
-    @OneToMany
-    @JoinTable(
-            name = "user_comment",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "comment_id")
-    )
+//    @OneToMany
+//    @JoinTable(
+//            name = "user_comment",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "comment_id")
+//    )
+//    private List<Comment> comments = new ArrayList<>();
+    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
     public User(String name, String username) {

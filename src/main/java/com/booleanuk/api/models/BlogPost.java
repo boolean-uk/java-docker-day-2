@@ -19,8 +19,11 @@ public class BlogPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+//    @ManyToOne
+//    @JoinColumn
+//    private User publisher;
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "user_id")  // This creates the foreign key in the BlogPost table
     private User publisher;
 
     @CreationTimestamp
