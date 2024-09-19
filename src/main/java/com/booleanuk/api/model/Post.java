@@ -1,5 +1,6 @@
 package com.booleanuk.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public class Post {
 
    @ManyToOne
    @JoinColumn(name = "user_id")
-   @JsonIgnoreProperties(value = {"username", "followers", "following", "bio"})
+   @JsonIncludeProperties(value = {"username", "followers", "following", "bio"})
    private User user;
 
     public Post(int id) {

@@ -28,7 +28,7 @@ public class PostController {
 
 
     //Get all posts a user has made (Makes no sense to get all posts from everyone in a social media setting)
-    @GetMapping("{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<Response<?>> getAllUserPosts(@PathVariable int userId){
 
         User user = this.userRepository.findById(userId).orElse(null);
@@ -50,7 +50,7 @@ public class PostController {
 
 
     //Creates a post for a user. No posts can be made without user.
-    @PostMapping("{userId}")
+    @PostMapping("/users/{userId}")
     public ResponseEntity<Response<?>> createUserPost(@PathVariable int userId, @RequestBody Post post){
 
         User user = this.userRepository.findById(userId).orElse(null);
