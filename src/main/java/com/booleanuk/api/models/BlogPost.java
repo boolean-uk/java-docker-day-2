@@ -35,8 +35,7 @@ public class BlogPost {
     @JoinColumn
     private List<Comment> comments = new ArrayList<>();
 
-    public BlogPost(User publisher, String text) {
-        this.publisher = publisher;
+    public BlogPost(String text) {
         this.text = text;
     }
 }

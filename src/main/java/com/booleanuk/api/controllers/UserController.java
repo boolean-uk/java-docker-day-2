@@ -1,5 +1,6 @@
 package com.booleanuk.api.controllers;
 
+import com.booleanuk.api.models.BlogPost;
 import com.booleanuk.api.models.User;
 import com.booleanuk.api.repositories.BlogPostRepository;
 import com.booleanuk.api.repositories.CommentRepository;
@@ -83,9 +84,49 @@ public class UserController {
             error.set("Not found");
             return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
-        this.userRepository.delete(user);
+
         UserResponse response = new UserResponse();
         response.set(user);
+
+        try {
+            this.userRepository.delete(user);
+        } catch (Exception e) {
+            ErrorResponse error = new ErrorResponse();
+            error.set("Bad request");
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
         return ResponseEntity.ok(response);
+    }
+
+    // Publish a blogpost for user with provided id
+    @PostMapping("{userId}/blogposts")
+    public ResponseEntity<Response<?>> publishBlogPostForUser(
+            @PathVariable int userId,
+            @RequestBody BlogPost blogpost) {
+
+        User user = this.userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            ErrorResponse error = new ErrorResponse();
+            error.set("A user with this id was not found.");
+            return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+        }
+
+        // Populate blogpost with publisher info
+        blogpost.setPublisher(user);
+        this.blogPostRepository.save(blogpost);
+
+        // Add blogpost to user
+        user.getBlogPosts().add(blogpost);
+        try {
+            this.userRepository.save(user);
+        } catch (Exception e) {
+            ErrorResponse error = new ErrorResponse();
+            error.set("Bad request");
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
+        UserResponse response = new UserResponse();
+        response.set(user);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
