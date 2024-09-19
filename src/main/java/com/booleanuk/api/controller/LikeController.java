@@ -24,21 +24,19 @@ public class LikeController {
     private LikeRepository likeRepository;
 
     //Get all likes of a post
-    @GetMapping("/posts/{postId}")
-    public ResponseEntity<Response<?>> getAllPostLikes(@PathVariable int postId){
-
+    @GetMapping("{likeId}/posts{postId}")
+    public ResponseEntity<Response<?>> getAllPostLikes(@PathVariable int likeId, @PathVariable int postId){
+        Like like = this.likeRepository.findById(likeId).orElse(null);
         Post post = this.postRepository.findById(postId).orElse(null);
-        if (post == null){
+
+        if (post == null || like == null){
             ErrorResponse error = new ErrorResponse();
             error.set("No post with that id found");
 
             return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
-        
-        List<Like> likeList = this.likeRepository.findAllByPostId(post.getId());
-
-        LikeListResponse response = new LikeListResponse();
-        response.set(likeList);
+        LikeResponse response = new LikeResponse();
+        this.likeRepository.findById(like.getId());
 
         return ResponseEntity.ok(response);
     }
@@ -70,11 +68,9 @@ public class LikeController {
     public ResponseEntity<Response<?>> deletePost(@PathVariable int likeId, @PathVariable int postId){
 
         Like likeToDelete = this.likeRepository.findById(likeId).orElse(null);
-        Post post = this.postRepository.findById(postId).orElse(null);
-
-        if (likeToDelete == null || post == null){
+        if (likeToDelete == null){
             ErrorResponse error = new ErrorResponse();
-            error.set("No post or user with that id found");
+            error.set("No like with that id found");
 
             return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
         }
@@ -82,7 +78,6 @@ public class LikeController {
         LikeResponse response = new LikeResponse();
 
         this.likeRepository.delete(likeToDelete);
-
         response.set(likeToDelete);
 
         return ResponseEntity.ok(response);
