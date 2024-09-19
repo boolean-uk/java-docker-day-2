@@ -1,3 +1,6 @@
 package com.booleanuk.api.repository;
 
-public interface PostRepository {}
+import com.booleanuk.api.model.Post;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface PostRepository extends JpaRepository<Post, Integer> {}

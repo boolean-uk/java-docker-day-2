@@ -1,5 +1,6 @@
 package com.booleanuk.api.model;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -34,10 +35,19 @@ public class User {
     @JsonManagedReference
     private List<Post> posts;
 
-    public User(String username, String password, LocalDateTime createdAt, String bio) {
+    public User(String username, String password, String bio) {
         this.username = username;
-        this.password = password;
-        this.createdAt = createdAt;
+        this.setPassword(password);
         this.bio = bio;
+    }
+
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Encrypting the password before it is stored in the db.
+    public void setPassword(String password) {
+        this.password = BCrypt.withDefaults().hashToString(12, password.toCharArray());
     }
 }
