@@ -1,14 +1,15 @@
 package com.booleanuk.api.controller;
 
 import com.booleanuk.api.model.Post;
+import com.booleanuk.api.model.User;
 import com.booleanuk.api.model.dto.PostDTO;
 import com.booleanuk.api.repository.PostRepository;
+import com.booleanuk.api.repository.UserRepository;
 import com.booleanuk.api.responses.ErrorResponse;
 import com.booleanuk.api.responses.PostListResponse;
 import com.booleanuk.api.responses.PostResponse;
 import com.booleanuk.api.responses.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public class PostController {
 
     @Autowired
     private PostRepository posts;
+
+    @Autowired
+    private UserRepository users;
 
     @GetMapping
     public ResponseEntity<PostListResponse> getAll() {
@@ -43,13 +47,23 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<PostResponse> create(@RequestBody PostDTO toAdd) {
+    public ResponseEntity<Response<?>> create(@RequestBody PostDTO toAdd) {
+
+        User byUser = this.users.findById(toAdd.getByUser()).orElse(null);
+        if (byUser == null) {
+            ErrorResponse errorResponse = new ErrorResponse("user not found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
 
         Post actualToAdd = new Post();
+        actualToAdd.setByUser(byUser);
         actualToAdd.setTitle(toAdd.getTitle());
         actualToAdd.setContent(toAdd.getContent());
         actualToAdd.setPostedOn(LocalDateTime.now());
         actualToAdd.setLastUpdatedOn(LocalDateTime.now());
+
+        byUser.addPost(actualToAdd);
+        this.users.save(byUser);
 
         PostResponse postResponse = new PostResponse();
         postResponse.set(this.posts.save(actualToAdd));
