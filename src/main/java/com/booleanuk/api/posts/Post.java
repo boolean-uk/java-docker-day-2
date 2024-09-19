@@ -44,7 +44,7 @@ public class Post {
     private int likesCount = 0;
 
     @Column
-    private int repostsCount;
+    private int repostsCount = 0;
 
     public Post(User user, String content) {
         this.user = user;
