@@ -16,11 +16,15 @@ import java.util.List;
 @Entity
 @Table(name="users")
 public class User {
+	public User(Integer id) {
+		this.id = id;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column
+	@Column(nullable = false)
 	private String username;
 
 
@@ -28,4 +32,10 @@ public class User {
 	@JsonIgnoreProperties(value = {"messages"}) // ignorer user sine messages.
 	@JsonIgnore
 	private List<Message> messages;
+
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("user")
+	@JsonIgnore
+	private List<Like> likes;
+
 }

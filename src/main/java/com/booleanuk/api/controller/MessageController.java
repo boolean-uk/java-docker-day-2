@@ -35,9 +35,10 @@ public class MessageController {
 
 	public boolean checkIfInvalidMessage(Message message){
 		try{
-			return message.getText() != null && userRepository.existsById(message.getUser().getId());
+			return message.getText() == null; // && userRepository.existsById(message.getUser().getId());
 		} catch (Exception e) {
-			return false;
+			System.out.println(e);
+			return true;
 		}
 	}
 

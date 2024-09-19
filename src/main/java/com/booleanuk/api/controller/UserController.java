@@ -34,12 +34,14 @@ public class UserController {
 
 
 	public boolean checkIfInvalidUser(User user){
-		try{
-			return user.getUsername() != null;
+		try {
+			return user.getUsername() == null || user.getUsername().isEmpty();
 		} catch (Exception e) {
-			return false;
+			System.out.println(e);
+			return true;
 		}
 	}
+
 
 
 	@PostMapping

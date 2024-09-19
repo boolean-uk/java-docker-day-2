@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: User and Message API
-  description: API for managing users and messages
+  title: User, Message, and Like API
+  description: API for managing users, messages, and likes
   version: 1.0.0
 servers:
   - url: http://localhost:4000
@@ -22,12 +22,17 @@ paths:
     post:
       summary: Create a new user
       requestBody:
-        description: User object that needs to be added
+        description: Only username is required for creating a user
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Username of the user
+                  example: john_doe
       responses:
         '201':
           description: The created user
@@ -67,12 +72,17 @@ paths:
           required: true
           description: User ID
       requestBody:
-        description: User object with updated details
+        description: Update the user's username
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: New username for the user
+                  example: john_updated
       responses:
         '201':
           description: The updated user
@@ -123,7 +133,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Message'
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: Content of the message
+                  example: "This is a test message"
+                postedDate:
+                  type: string
+                  format: date
+                  description: Date the message was posted
+                  example: "2024-09-19"
+                userId:
+                  type: integer
+                  description: ID of the user posting the message
+                  example: 1
       responses:
         '201':
           description: The created message
@@ -168,7 +192,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Message'
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: Updated content of the message
+                  example: "Updated message content"
+                postedDate:
+                  type: string
+                  format: date
+                  description: Updated posted date
+                  example: "2024-09-20"
       responses:
         '201':
           description: The updated message
@@ -199,6 +233,84 @@ paths:
         '404':
           description: Message not found
 
+  /likes:
+    get:
+      summary: Get all likes
+      responses:
+        '200':
+          description: A list of likes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Like'
+    post:
+      summary: Create a new like
+      requestBody:
+        description: Create a new like for a message
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  description: ID of the user liking the message
+                  example: 1
+                messageId:
+                  type: integer
+                  description: ID of the message being liked
+                  example: 1
+      responses:
+        '201':
+          description: The created like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+        '400':
+          description: Invalid input data
+
+  /likes/{id}:
+    get:
+      summary: Get a like by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Like ID
+      responses:
+        '200':
+          description: Like found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+        '404':
+          description: Like not found
+    delete:
+      summary: Delete a like by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Like ID
+      responses:
+        '200':
+          description: The deleted like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+        '404':
+          description: Like not found
+
 components:
   schemas:
     User:
@@ -210,11 +322,6 @@ components:
         username:
           type: string
           description: Username of the user
-        messages:
-          type: array
-          items:
-            $ref: '#/components/schemas/Message'
-          description: List of messages from this user
 
     Message:
       type: object
@@ -229,6 +336,19 @@ components:
           type: string
           format: date
           description: Date the message was posted
-        user:
-          $ref: '#/components/schemas/User'
-          description: The user who posted the message
+        userId:
+          type: integer
+          description: The ID of the user who posted the message
+
+    Like:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Like ID
+        userId:
+          type: integer
+          description: The ID of the user who liked the message
+        messageId:
+          type: integer
+          description: The ID of the liked message
