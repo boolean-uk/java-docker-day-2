@@ -1,6 +1,5 @@
 package com.booleanuk.api.dto;
 
-import com.booleanuk.api.model.User;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

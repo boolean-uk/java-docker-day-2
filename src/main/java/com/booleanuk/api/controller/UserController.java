@@ -4,7 +4,6 @@ import com.booleanuk.api.dto.UserDTO;
 import com.booleanuk.api.dto.UserMapper;
 import com.booleanuk.api.model.User;
 import com.booleanuk.api.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +15,13 @@ import java.util.List;
 @RequestMapping("users")
 public class UserController {
 
-    @Autowired
     UserRepository userRepository;
-
-    @Autowired
     UserMapper userMapper;
+
+    public UserController(UserRepository userRepository, UserMapper userMapper) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+    }
 
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllPosts() {

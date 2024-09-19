@@ -3,9 +3,9 @@ package com.booleanuk.api.dto;
 import com.booleanuk.api.model.Post;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@Repository
 @Mapper(componentModel = "spring")
 public interface PostMapper {
     @Mapping(target = "id", ignore = true)
