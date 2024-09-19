@@ -19,4 +19,9 @@ public class Post {
   @JoinColumn(name = "user_id")
   @JsonIgnoreProperties("posts")
   private User creator;
+
+  public void update(Post other) {
+    this.content = other.content;
+    this.creator = other.creator;
+  }
 }

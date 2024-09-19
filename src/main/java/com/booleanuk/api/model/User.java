@@ -20,4 +20,9 @@ public class User {
   @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonIgnoreProperties("creator")
   private List<Post> posts;
+
+  public void update(User other) {
+    this.name = other.name;
+    this.posts = other.posts;
+  }
 }
