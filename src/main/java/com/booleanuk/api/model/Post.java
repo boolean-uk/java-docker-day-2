@@ -1,6 +1,9 @@
 package com.booleanuk.api.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,16 +29,22 @@ public class Post {
     private Integer id;
 
     public String contents;
+
+    @ManyToOne
+    @JoinColumn(name = "originalPosterId")
+    @JsonIgnoreProperties({"aboutMe", "posts"})
     public User originalPoster;
 
     @ManyToOne
     @JoinColumn(name = "parentPostId")
+    @JsonIgnoreProperties({"originalPoster", "parentPost", "comments", "likes", "createdAt"})
     public Post parentPost;
 
     @OneToMany(mappedBy = "parentPost", cascade = CascadeType.ALL)
     private List<Post> comments;
 
     @OneToMany(mappedBy = "likedPost", cascade = CascadeType.ALL)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Like> likes;
 
     @CreatedDate
@@ -52,6 +61,7 @@ public class Post {
         this.createdAt = LocalDateTime.now();
     }
 
+    @JsonIgnore
     public boolean isInvalid() {
         return StringUtils.isBlank(contents);
     }

@@ -1,6 +1,9 @@
 package com.booleanuk.api.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micrometer.common.util.StringUtils;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +31,11 @@ public class User {
     private String aboutMe;
 
     @OneToMany(mappedBy = "originalPoster", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"originalPoster", "parentPost", "likes"})
     private List<Post> posts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Like> likes;
 
     @CreatedDate
@@ -46,6 +50,7 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
+    @JsonIgnore
     public boolean isInvalid() {
         return (StringUtils.isBlank(name) || StringUtils.isBlank(aboutMe));
     }

@@ -60,7 +60,7 @@ public class PostController {
     }
 
     @PostMapping("{userId}/{postId}")
-    public ResponseEntity<ApiResponse<?>> createPost (@PathVariable int userId, @PathVariable int postId, @RequestBody Post postDetails) {
+    public ResponseEntity<ApiResponse<?>> createComment (@PathVariable int userId, @PathVariable int postId, @RequestBody Post postDetails) {
         Optional<User> use = this.userRepository.findById(userId);
 
         if(use.isEmpty()) {
@@ -167,7 +167,7 @@ public class PostController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ApiResponse<?>> update (@PathVariable int id, @RequestBody String newContents) {
+    public ResponseEntity<ApiResponse<?>> update (@PathVariable int id, @RequestBody Post postDetails) {
         Optional<Post> pos = this.postRepository.findById(id);
 
         if(pos.isEmpty()) {
@@ -177,12 +177,12 @@ public class PostController {
 
         Post post = pos.get();
 
-        if(StringUtils.isBlank(newContents)) {
+        if(postDetails.isInvalid()) {
             ApiResponse<String> response = new ApiResponse<>("error", "Could not create a post with the specified parameters.");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        post.setContents(newContents);
+        post.setContents(postDetails.getContents());
 
         ApiResponse<Post> response = new ApiResponse<>("success", post);
         return new ResponseEntity<>(response, HttpStatus.CREATED);

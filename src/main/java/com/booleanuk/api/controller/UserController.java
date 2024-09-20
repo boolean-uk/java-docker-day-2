@@ -129,6 +129,7 @@ public class UserController {
         }
 
         User user =  use.get();
+        this.friendRepository.deleteAllByUserId(user.getId());
         this.repository.delete(user);
 
         ApiResponse<User> response = new ApiResponse<>("success", user);
