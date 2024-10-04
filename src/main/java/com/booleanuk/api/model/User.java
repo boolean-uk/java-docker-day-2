@@ -27,6 +27,7 @@ public class User {
     public User(String username) {
         this.username = username;
     }
+    // Getters and Setters
 
     public int getId() {
         return id;
