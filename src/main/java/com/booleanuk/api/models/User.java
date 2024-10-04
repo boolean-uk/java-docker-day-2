@@ -1,5 +1,7 @@
 package com.booleanuk.api.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity(name = "users")
 @Table
+@JsonIgnoreProperties({"blogPosts"})
 public class User {
 
     @Id
@@ -23,26 +26,9 @@ public class User {
     @Column
     private String username;
 
-
-//    @OneToMany
-//    @JoinTable(
-//            name = "user_blogpost",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "blogpost_id")
-//    )
-//    private List<BlogPost> blogPosts = new ArrayList<>();
     @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference       // To avoid recursion error
     private List<BlogPost> blogPosts = new ArrayList<>();
-
-//    @OneToMany
-//    @JoinTable(
-//            name = "user_comment",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "comment_id")
-//    )
-//    private List<Comment> comments = new ArrayList<>();
-    @OneToMany(mappedBy = "publisher", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments = new ArrayList<>();
 
     public User(String name, String username) {
         this.name = name;

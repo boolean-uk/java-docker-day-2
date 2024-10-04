@@ -1,5 +1,6 @@
 package com.booleanuk.api.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,11 +20,9 @@ public class BlogPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-//    @ManyToOne
-//    @JoinColumn
-//    private User publisher;
     @ManyToOne
-    @JoinColumn(name = "user_id")  // This creates the foreign key in the BlogPost table
+    @JoinColumn
+    @JsonBackReference      // To avoid recursion error
     private User publisher;
 
     @CreationTimestamp
