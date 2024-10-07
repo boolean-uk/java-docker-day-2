@@ -22,6 +22,11 @@ public class Comment {
     private String content;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIncludeProperties(value = {"userName"})
+    private User user;
+
+    @ManyToOne
     @JoinColumn(name = "post_id")
     @JsonIncludeProperties(value = {"content", "likes"})
     private Post post;
