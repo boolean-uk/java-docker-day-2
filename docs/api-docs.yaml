@@ -1,0 +1,407 @@
+openapi: 3.1.0
+info:
+  title: Java API Exercise - Extension Criteria
+  description: |-
+    This is a simple API for a social network. It allows you to create, read, update and delete users and posts. You can also follow and unfollow users, and like and repost posts.
+  version: 0.2.2
+servers:
+- url: http://localhost:4000
+  description: Generated server url
+tags:
+- name: Posts
+  description: Posts API
+- name: Users
+  description: Users API
+paths:
+  /users/{id}:
+    get:
+      tags:
+      - Users
+      summary: Get user by id
+      operationId: getById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserAllDTO'
+    put:
+      tags:
+      - Users
+      summary: Update user
+      operationId: update
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags:
+      - Users
+      summary: Delete user
+      operationId: delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /posts/{id}:
+    get:
+      tags:
+      - Posts
+      summary: Get post by id
+      operationId: getById_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostSingleDTO'
+    put:
+      tags:
+      - Posts
+      operationId: update_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostSingleDTO'
+    delete:
+      tags:
+      - Posts
+      summary: Delete post
+      operationId: delete_1
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostSingleDTO'
+  /users:
+    get:
+      tags:
+      - Users
+      summary: Get all users
+      operationId: getAll
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserAllDTO'
+    post:
+      tags:
+      - Users
+      summary: Create user
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{id}/unfollow/{followedId}:
+    post:
+      tags:
+      - Users
+      summary: Unfollow user
+      operationId: unfollow
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: followedId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserSingleDTO'
+  /users/{id}/repost/{postId}:
+    post:
+      tags:
+      - Users
+      summary: Repost post
+      operationId: repost
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserSingleDTO'
+  /users/{id}/follow/{followedId}:
+    post:
+      tags:
+      - Users
+      summary: Follow user
+      operationId: follow
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: followedId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserSingleDTO'
+  /posts:
+    get:
+      tags:
+      - Posts
+      summary: Get all posts
+      operationId: getAll_1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostSingleDTO'
+    post:
+      tags:
+      - Posts
+      summary: Create post
+      operationId: create_1
+      parameters:
+      - name: userId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostSingleDTO'
+  /posts/{id}/like/{userId}:
+    post:
+      tags:
+      - Posts
+      summary: Like post
+      operationId: like
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/PostSingleDTO'
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+        content:
+          type: string
+        author:
+          $ref: '#/components/schemas/User'
+        likes:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        reposts:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        email:
+          type: string
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        reposts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        followers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    PostSingleDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        title:
+          type: string
+        content:
+          type: string
+        author:
+          $ref: '#/components/schemas/UserSingleDTO'
+    UserSingleDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        email:
+          type: string
+    UserAllDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        email:
+          type: string
+        posts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        reposts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        followers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
