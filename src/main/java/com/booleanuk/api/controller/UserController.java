@@ -7,6 +7,7 @@ import com.booleanuk.api.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/user")
@@ -47,5 +48,35 @@ public class UserController {
         User user = userRepository.findByUsername(username);
         if (user == null) return null;
         return postRepository.findAllByUser(user);
+    }
+
+    @GetMapping("/{username}/following")
+    public Set<User> getFollowing(@PathVariable String username) {
+        return userRepository.findByUsername(username).getFollowing();
+    }
+
+    // todo: tbd; join table, list of followers probably easiest way
+    @GetMapping("/{username}/followers")
+    public Set<User> getFollowers(@PathVariable String username) {
+        return null;
+    }
+
+    @PostMapping("/{username}/follow")
+    public Set<User> startFollowing(@PathVariable(name="username") String usernameToFollow, @RequestBody User requestFollower) {
+        User follower = userRepository.findByUsername(requestFollower.getUsername());
+        User userToFollow = userRepository.findByUsername(usernameToFollow);
+        if (follower == null || userToFollow == null) return null;
+        follower.getFollowing().add(userToFollow);
+        userRepository.save(follower);
+        return follower.getFollowing();
+    }
+
+    @GetMapping("/{username}/feed")
+    public List<Post> getPostsByFriends(@PathVariable String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) return null;
+        return postRepository.findAll().stream().filter(
+                p -> user.getFollowing().contains(p.getUser())
+        ).toList();
     }
 }
