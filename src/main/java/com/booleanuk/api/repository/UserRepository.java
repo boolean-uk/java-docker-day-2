@@ -1,4 +1,7 @@
 package com.booleanuk.api.repository;
 
-public class UserRepository {
+import com.booleanuk.api.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User, Integer> {
 }

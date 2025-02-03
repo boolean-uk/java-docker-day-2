@@ -1,4 +1,6 @@
 package com.booleanuk.api.response;
 
-public class UserResponse {
+import com.booleanuk.api.model.User;
+
+public class UserResponse extends Response<User> {
 }
