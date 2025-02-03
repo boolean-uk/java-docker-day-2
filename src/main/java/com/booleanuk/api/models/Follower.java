@@ -20,11 +20,9 @@ public class Follower {
     private int id;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
     private User follower;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
     private User following;
 
     @Column
@@ -39,4 +37,11 @@ public class Follower {
     public Follower(){
         createdAt = LocalDateTime.now();
     }
+
+    public Follower(int id){
+        this.id = id;
+        createdAt = LocalDateTime.now();
+    }
+
+
 }

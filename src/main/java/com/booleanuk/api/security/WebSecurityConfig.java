@@ -54,9 +54,9 @@ public class WebSecurityConfig {
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/items").authenticated()
-                        .requestMatchers("/items/user/**").hasRole("USER")
-                        .requestMatchers("/items/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/user").authenticated()
+                        .requestMatchers("/user/**").hasRole("USER")
+
                 );
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

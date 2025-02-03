@@ -1,4 +1,5 @@
 package com.booleanuk.api.models;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -42,19 +43,19 @@ public class User {
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "followers")
-    private List<User> followers;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "following")
-    private List<User> following;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private List<Post> posts;
+//    @JsonIgnore
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    private User follows;
+//
+//    @JsonIgnore
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    private Post posts;
 
     @Column
     private LocalDateTime createdAt;
 
-    @Column LocalDateTime updatedAt;
+    @Column
+    private LocalDateTime updatedAt;
 
     public User(String username, String email, String password) {
         this.username = username;
@@ -65,6 +66,12 @@ public class User {
     }
 
     public User(){
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public User(int id){
+        this.id = id;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }

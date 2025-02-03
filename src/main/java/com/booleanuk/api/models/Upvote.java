@@ -37,4 +37,9 @@ public class Upvote {
     public Upvote(){
         createdAt = LocalDateTime.now();
     }
+
+    public Upvote(int id){
+        this.id = id;
+        createdAt = LocalDateTime.now();
+    }
 }

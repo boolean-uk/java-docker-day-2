@@ -1,5 +1,6 @@
 package com.booleanuk.api.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,19 +28,31 @@ public class Post {
     @Column
     private String content;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "post")
-    private List<Upvote> upvotes;
+//    @JsonIgnore
+//    @ManyToOne(cascade = CascadeType.ALL)
+//    private Upvote upvotes;
 
     @Column
     private LocalDateTime createdAt;
 
+    @Column
+    private LocalDateTime updatedAt;
+
     public Post(User user, String content){
         this.user = user;
         this.content = content;
-        createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public Post(){
-        createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Post(int id){
+        this.id = id;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }
