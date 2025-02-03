@@ -1,13 +1,12 @@
 package com.booleanuk.api.controller;
 
+import com.booleanuk.api.model.Comment;
 import com.booleanuk.api.model.Post;
 import com.booleanuk.api.model.User;
+import com.booleanuk.api.repository.CommentRepository;
 import com.booleanuk.api.repository.PostRepository;
 import com.booleanuk.api.repository.UserRepository;
-import com.booleanuk.api.response.ErrorResponse;
-import com.booleanuk.api.response.PostListResponse;
-import com.booleanuk.api.response.PostResponse;
-import com.booleanuk.api.response.Response;
+import com.booleanuk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +23,14 @@ public class PostController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private CommentRepository commentRepository;
+
     private ErrorResponse errorResponse = new ErrorResponse();
     private PostResponse postResponse = new PostResponse();
     private PostListResponse postListResponse = new PostListResponse();
+    private CommentListResponse commentListResponse = new CommentListResponse();
+    private CommentResponse commentResponse = new CommentResponse();
 
     @GetMapping
     public ResponseEntity<Response<?>> getAllPosts() {
@@ -90,4 +94,51 @@ public class PostController {
         return ResponseEntity.ok(postResponse);
     }
 
+    @GetMapping("{id}/comments")
+    public ResponseEntity<Response<?>> getAllComments(@PathVariable int id) {
+        Post postWithComments = this.postRepository.findById(id).orElse(null);
+        if (postWithComments == null) {
+            errorResponse.set("Not found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+        this.commentListResponse.set(postWithComments.getComments());
+        return ResponseEntity.ok(commentListResponse);
+    }
+
+    @PostMapping("{id}/comments")
+    public ResponseEntity<Response<?>> addComment(@PathVariable int id, @RequestBody Comment comment) {
+        Post postWithComments = this.postRepository.findById(id).orElse(null);
+        if (postWithComments == null) {
+            this.errorResponse.set("Not found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+        postWithComments.getComments().add(comment);
+        this.commentResponse.set(comment);
+        return ResponseEntity.ok(commentResponse);
+    }
+
+    @GetMapping("{post_id}/comments/{comment_id}")
+    public ResponseEntity<Response<?>> getOneComment(@PathVariable int postId, @PathVariable int commentId) {
+        Post post = this.postRepository.findById(postId).orElse(null);
+        Comment comment = this.commentRepository.findById(commentId).orElse(null);
+        if (post == null || comment == null) {
+            this.errorResponse.set("Post or comment not found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+        this.commentResponse.set(comment);
+        return ResponseEntity.ok(commentResponse);
+    }
+
+    @DeleteMapping("{post_id}/friends/{comment_id}")
+    public ResponseEntity<Response<?>> removeComment(@PathVariable int postId, @PathVariable int commentId) {
+        Post post = this.postRepository.findById(postId).orElse(null);
+        Comment comment = this.commentRepository.findById(commentId).orElse(null);
+        if (post == null || comment == null) {
+            this.errorResponse.set("Post or comment not found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+        post.getComments().remove(comment);
+        this.commentResponse.set(comment);
+        return ResponseEntity.ok(commentResponse);
+    }
 }
