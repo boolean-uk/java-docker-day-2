@@ -55,10 +55,11 @@ public class UserController {
         return userRepository.findByUsername(username).getFollowing();
     }
 
-    // todo: tbd; join table, list of followers probably easiest way
     @GetMapping("/{username}/followers")
     public Set<User> getFollowers(@PathVariable String username) {
-        return null;
+        User user = userRepository.findByUsername(username);
+        if (user == null) return null;
+        return user.getFollowers();
     }
 
     @PostMapping("/{username}/follow")
@@ -67,7 +68,9 @@ public class UserController {
         User userToFollow = userRepository.findByUsername(usernameToFollow);
         if (follower == null || userToFollow == null) return null;
         follower.getFollowing().add(userToFollow);
+        userToFollow.getFollowers().add(follower);
         userRepository.save(follower);
+        userRepository.save(userToFollow);
         return follower.getFollowing();
     }
 

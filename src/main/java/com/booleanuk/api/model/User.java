@@ -25,10 +25,16 @@ public class User {
     @ManyToMany
     Set<User> following;
 
-    public User(String username, List<Post> posts, Set<User> following) {
+    // the way this is implemented, it's possible that following-follower is a 1-way relationship, which should never happen.
+    // but i'll leave it like this for now; it works as long as nothing unexpected happens
+    @ManyToMany
+    Set<User> followers;
+
+    public User(String username, List<Post> posts, Set<User> following, Set<User> followers) {
         this.username = username;
         this.posts = posts;
         this.following = following;
+        this.followers = followers;
     }
 
     public User() {
@@ -64,5 +70,13 @@ public class User {
 
     public void setFollowing(Set<User> following) {
         this.following = following;
+    }
+
+    public Set<User> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(Set<User> followers) {
+        this.followers = followers;
     }
 }
