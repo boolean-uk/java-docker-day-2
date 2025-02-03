@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/posts")
@@ -26,38 +27,60 @@ public class PostController {
     }
 
     @GetMapping("/{post_id}")
-    public Post getPost(@PathVariable int postId) {
+    public Post getPost(@PathVariable(name="post_id") int postId) {
         return postRepository.findById(postId).orElse(null);
     }
 
     public record PostUserRecord(String username, String body) {}
 
     @PostMapping
-    public Post createPost(@RequestBody PostUserRecord postRecord) {
-        User user = userRepository.findByUsername(postRecord.username);
+    public Post createPost(@RequestBody PostUserRecord postUser) {
+        User user = userRepository.findByUsername(postUser.username);
         if (user == null) return null;
         Post post = new Post();
         post.setUser(user);
-        post.setBody(postRecord.body);
+        post.setBody(postUser.body);
         post.setTimestamp(LocalDateTime.now());
         return postRepository.save(post);
     }
 
-    @PostMapping("/{post_id}/{username}")
-    public Post repost(@PathVariable int postId, @RequestBody PostUserRecord postUser) {
+    @PostMapping("/{post_id}")
+    public Post repost(@PathVariable(name="post_id") int postId, @RequestBody PostUserRecord postUser) {
         User user = userRepository.findByUsername(postUser.username);
-        if (user == null) return null;
         Post originalPost = postRepository.findById(postId).orElseThrow();
+        if (user == null) return null;
         Post repost = new Post();
         repost.setUser(user);
+        repost.setBody(postUser.body);
         repost.setOriginalPost(originalPost);
         repost.setTimestamp(LocalDateTime.now());
-        repost.setBody(postUser.body);
         return postRepository.save(repost);
     }
 
-    @GetMapping("/{username}")
-    public List<Post> getPostsByUser(@PathVariable String username) {
-        return userRepository.findByUsername(username).getPosts();
+    @PostMapping("/{post_id}/upvotes")
+    public Set<User> upvote(@PathVariable(name="post_id") int postId, @RequestBody User requestUser) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        User user = userRepository.findByUsername(requestUser.getUsername());
+        if (user == null) return null;
+        post.getUpvotes().add(user);
+        postRepository.save(post);
+        return post.getUpvotes();
+    }
+
+    @GetMapping("/{post_id}/upvotes")
+    public Set<User> getUpvotes(@PathVariable(name="post_id") int postId) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        return post.getUpvotes();
+    }
+
+    // todo: maybe error handling when user has not upvoted or maybe that's ok. maybe different response
+    @DeleteMapping("/{post_id}/upvotes")
+    public Set<User> removeUpvote(@PathVariable(name="post_id") int postId, @RequestBody User requestUser) {
+        Post post = postRepository.findById(postId).orElseThrow();
+        User user = userRepository.findByUsername(requestUser.getUsername());
+        if (user == null) return null;
+        post.getUpvotes().remove(user);
+        postRepository.save(post);
+        return post.getUpvotes();
     }
 }

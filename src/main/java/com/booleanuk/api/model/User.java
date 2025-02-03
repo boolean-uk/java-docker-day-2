@@ -3,6 +3,7 @@ package com.booleanuk.api.model;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -22,9 +23,9 @@ public class User {
     List<Post> posts;
 
     @ManyToMany
-    List<User> following;
+    Set<User> following;
 
-    public User(String username, List<Post> posts, List<User> following) {
+    public User(String username, List<Post> posts, Set<User> following) {
         this.username = username;
         this.posts = posts;
         this.following = following;
@@ -57,11 +58,11 @@ public class User {
         this.posts = posts;
     }
 
-    public List<User> getFollowing() {
+    public Set<User> getFollowing() {
         return following;
     }
 
-    public void setFollowing(List<User> following) {
+    public void setFollowing(Set<User> following) {
         this.following = following;
     }
 }

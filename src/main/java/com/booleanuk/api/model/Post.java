@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -25,7 +26,7 @@ public class Post {
     private LocalDateTime timestamp;
 
     @ManyToMany
-    private List<User> upvotes;
+    private Set<User> upvotes;
 
     public Post(User user, String body, Post originalPost) {
         this.user = user;
@@ -68,11 +69,11 @@ public class Post {
         this.timestamp = timestamp;
     }
 
-    public List<User> getUpvotes() {
+    public Set<User> getUpvotes() {
         return upvotes;
     }
 
-    public void setUpvotes(List<User> upvotes) {
+    public void setUpvotes(Set<User> upvotes) {
         this.upvotes = upvotes;
     }
 
