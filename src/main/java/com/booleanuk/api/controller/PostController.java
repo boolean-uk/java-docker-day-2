@@ -2,7 +2,6 @@ package com.booleanuk.api.controller;
 
 import com.booleanuk.api.model.Comment;
 import com.booleanuk.api.model.Post;
-import com.booleanuk.api.model.User;
 import com.booleanuk.api.repository.CommentRepository;
 import com.booleanuk.api.repository.PostRepository;
 import com.booleanuk.api.repository.UserRepository;
@@ -31,11 +30,23 @@ public class PostController {
     private PostListResponse postListResponse = new PostListResponse();
     private CommentListResponse commentListResponse = new CommentListResponse();
     private CommentResponse commentResponse = new CommentResponse();
+    private RepostListResponse repostListResponse = new RepostListResponse();
 
     @GetMapping
     public ResponseEntity<Response<?>> getAllPosts() {
         postListResponse.set(this.postRepository.findAll());
         return ResponseEntity.ok(postListResponse);
+    }
+
+    @GetMapping("{id}/reposts")
+    public ResponseEntity<Response<?>> getAllRepostsForPost(@PathVariable int id) {
+        Post postWithReposts = this.postRepository.findById(id).orElse(null);
+        if (postWithReposts == null) {
+            this.errorResponse.set("Not found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+        this.repostListResponse.set(postWithReposts.getReposts());
+        return ResponseEntity.ok(repostListResponse);
     }
 
     @PostMapping
@@ -86,7 +97,7 @@ public class PostController {
     public ResponseEntity<Response<?>> deletePost(@PathVariable int id) {
         Post postToDelete = this.postRepository.findById(id).orElse(null);
         if (postToDelete == null) {
-            errorResponse.set("Not found");
+            this.errorResponse.set("Not found");
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         }
         this.postRepository.delete(postToDelete);
