@@ -27,6 +27,8 @@ public class UserController {
         return ResponseEntity.ok(userListResponse);
     }
 
+    // get all posts from user
+
     @PostMapping
     public ResponseEntity<Response<?>> createUser (@RequestBody User user) {
         try {
