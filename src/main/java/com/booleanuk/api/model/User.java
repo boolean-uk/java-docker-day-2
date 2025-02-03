@@ -1,5 +1,7 @@
 package com.booleanuk.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,14 +21,18 @@ public class User {
     @Column
     private String username;
 
+    @JsonIgnore
     @OneToMany
     List<Post> posts;
 
+    @JsonIgnore
     @ManyToMany
     Set<User> following;
 
     // the way this is implemented, it's possible that following-follower is a 1-way relationship, which should never happen.
     // but i'll leave it like this for now; it works as long as nothing unexpected happens
+//    @JsonIncludeProperties({"username"})
+    @JsonIgnore
     @ManyToMany
     Set<User> followers;
 

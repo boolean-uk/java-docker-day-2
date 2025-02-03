@@ -1,5 +1,6 @@
 package com.booleanuk.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ public class Post {
     @Column
     private LocalDateTime timestamp;
 
+    @JsonIgnore
     @ManyToMany
     private Set<User> upvotes;
 
