@@ -1,9 +1,10 @@
 package com.booleanuk.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -14,6 +15,7 @@ public class Post {
     private int id;
 
     @ManyToOne @JoinColumn
+    @JsonIncludeProperties({"id", "username"})
     private User user;
 
     @Column
@@ -25,6 +27,7 @@ public class Post {
     @Column
     private LocalDateTime timestamp;
 
+    @JsonIgnore
     @ManyToMany
     private Set<User> upvotes;
 
