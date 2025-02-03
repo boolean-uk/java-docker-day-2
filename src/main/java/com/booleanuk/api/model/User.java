@@ -22,12 +22,12 @@ public class User {
     List<Post> posts;
 
     @ManyToMany
-    List<User> friends;
+    List<User> following;
 
-    public User(String username, List<Post> posts, List<User> friends) {
+    public User(String username, List<Post> posts, List<User> following) {
         this.username = username;
         this.posts = posts;
-        this.friends = friends;
+        this.following = following;
     }
 
     public User() {
@@ -57,11 +57,11 @@ public class User {
         this.posts = posts;
     }
 
-    public List<User> getFriends() {
-        return friends;
+    public List<User> getFollowing() {
+        return following;
     }
 
-    public void setFriends(List<User> friends) {
-        this.friends = friends;
+    public void setFollowing(List<User> following) {
+        this.following = following;
     }
 }
