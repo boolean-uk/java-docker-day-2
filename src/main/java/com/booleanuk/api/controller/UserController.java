@@ -72,11 +72,60 @@ public class UserController {
     public ResponseEntity<Response<?>> deleteUser(@PathVariable int id) {
         User userToDelete = this.userRepository.findById(id).orElse(null);
         if (userToDelete == null) {
-            errorResponse.set("Not found");
+            this.errorResponse.set("Not found");
             return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
         }
         this.userRepository.delete(userToDelete);
-        userResponse.set(userToDelete);
+        this.userResponse.set(userToDelete);
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @GetMapping("{id}/friends")
+    public ResponseEntity<Response<?>> getAllFriends(@PathVariable int id) {
+        User userWithFriends = this.userRepository.findById(id).orElse(null);
+        if (userWithFriends == null) {
+            errorResponse.set("Not found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+        this.userListResponse.set(userWithFriends.getFriends());
+        return ResponseEntity.ok(userListResponse);
+    }
+
+    @PostMapping("{id}/friends")
+    public ResponseEntity<Response<?>> addFriend(@PathVariable int id, @RequestBody User friend) {
+        User userWithFriends = this.userRepository.findById(id).orElse(null);
+        if (userWithFriends == null) {
+            this.errorResponse.set("Not found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+        userWithFriends.getFriends().add(friend);
+        this.userResponse.set(friend);
+        return ResponseEntity.ok(userResponse);
+    }
+
+    // redundant? as friend can be found as any other user?
+    @GetMapping("{user_id}/friends/{friend_id}")
+    public ResponseEntity<Response<?>> getOneFriend(@PathVariable int userId, @PathVariable int friendId) {
+        User user = this.userRepository.findById(userId).orElse(null);
+        User friend = this.userRepository.findById(friendId).orElse(null);
+        if (user == null || friend == null) {
+            this.errorResponse.set("User or friend not found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+        this.userResponse.set(friend);
+        return ResponseEntity.ok(userResponse);
+    }
+
+    @DeleteMapping("{user_id}/friends/{friend_id}")
+    public ResponseEntity<Response<?>> removeFriend(@PathVariable int userId, @PathVariable int friendId) {
+        User user = this.userRepository.findById(userId).orElse(null);
+        User friend = this.userRepository.findById(friendId).orElse(null);
+        if (user == null || friend == null) {
+            this.errorResponse.set("User or friend not found");
+            return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        }
+        user.getFriends().remove(friend);
+        this.userResponse.set(friend);
         return ResponseEntity.ok(userResponse);
     }
 }

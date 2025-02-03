@@ -1,6 +1,7 @@
 package com.booleanuk.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties("user")
     private List<Post> posts;
+
+    @ManyToMany
+    @JsonIncludeProperties({"id", "username"})
+    private List<User> friends;
 
     public User(String username, String email) {
         this.username = username;
