@@ -35,3 +35,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+application.yml
+
+build/libs/
+
+build/libs/*.jar
+build/libs/*.war
