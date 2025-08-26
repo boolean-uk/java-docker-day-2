@@ -36,8 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-docker/docker-compose.yml
-
 src/main/resources/application.yml
 
 docker/*.jar
