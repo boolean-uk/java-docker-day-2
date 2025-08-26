@@ -1,0 +1,27 @@
+services:
+  app:
+    image: 'theater:latest'
+    container_name: app
+    depends_on:
+      - db
+    ports:
+      - '4000:4000'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ #fill
+      - SPRING_DATASOURCE_USERNAME= #fill
+      - SPRING_DATASOURCE_PASSWORD= #fill
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  db:
+    image: 'postgres:latest'
+    container_name: db
+    environment:
+      - POSTGRES_USER= #fill
+      - POSTGRES_DATABASE= #fill
+      - POSTGRES_PASSWORD= #fill
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+
+volumes:
+  db_data:
