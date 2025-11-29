@@ -5,3 +5,24 @@ server:
     include-binding-errors: always
     include-stacktrace: never
     include-exception: false
+
+spring:
+  datasource:
+    url: jdbc:postgresql://ep-white-sun-a2u5op1u.eu-central-1.aws.neon.tech:5432/docker2
+    username: neondb_owner
+    password: eM2OkvG0ours
+    max-active: 3
+    max-idle: 3
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+      show_sql: true
+
+booleanuk:
+  app:
+    jwtSecret: ===============================BooleanUK=Spring==============================================
+    jwtExpirationMs: 86400000
