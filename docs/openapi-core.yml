@@ -7,28 +7,29 @@ info:
 servers:
   - url: http://localhost:4000
 tags:
-  - name: examples
+  - name: users
+  - name: posts
 paths:
-  /examples:
+  /users:
     post:
       tags:
-        - examples
+        - users
       summary: Example POST route
       description: Description of an example POST route
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateExample'
+              $ref: '#/components/schemas/CreateUser'
       responses:
         201:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/User'
     get:
       tags:
-        - examples
+        - users
       summary: Example GET route
       description: Description of an example GET route
       responses:
@@ -36,11 +37,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllExamples'
-  /examples/{id}:
+                $ref: '#/components/schemas/AllUsers'
+  /users/{id}:
     put:
       tags:
-        - examples
+        - users
       summary: Example PUT route
       description: Description of an example PUT route
       parameters:
@@ -54,16 +55,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateExample'
+              $ref: '#/components/schemas/CreateUser'
       responses:
         201:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/User'
     delete:
       tags:
-        - examples
+        - users
       summary: Example DELETE route
       description: Description of an example DELETE route
       parameters:
@@ -78,31 +79,111 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/User'
+
+
+  /posts:
+    post:
+      tags:
+        - posts
+      summary: Example POST route
+      description: Description of an example POST route
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    get:
+      tags:
+        - posts
+      summary: Example GET route
+      description: Description of an example GET route
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllPosts'
+
+  /posts/{id}:
+    put:
+      tags:
+        - posts
+      summary: Example PUT route
+      description: Description of an example PUT route
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the example to update
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePost'
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+    delete:
+      tags:
+        - posts
+      summary: Example DELETE route
+      description: Description of an example DELETE route
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the example to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+
 
 components:
   schemas:
-    CreateExample:
+    CreateUser:
       type: object
-      required: [propertyOne, propertyTwo]
+      required: [name, username, email]
       properties:
-        propertyOne:
+        name:
           type: string
-          example: "Example Value"
-        propertyTwo:
+          example: "John Doe"
+        username:
+          type: string
+          example: "JohnathanDoe"
+        email:
           type: email
           format: email
           example: "example@email.value"
-    Example:
+    User:
       type: object
       properties:
         id:
           type: integer
           example: 1
-        propertyOne:
+        name:
           type: string
-          example: "Example Value"
-        propertyTwo:
+          example: "John Doe"
+        username:
+          type: string
+          example: "JohnathanDoe"
+        email:
           type: string
           example: "example@email.value"
         createdAt:
@@ -110,7 +191,40 @@ components:
           format: DateTime
           pattern: YYYY-MM-DDTHH:MM:SS
           example: 2023-03-14T11:01:56.633+00:00
-    AllExamples:
+    AllUsers:
       type: array
       items:
-        $ref: '#/components/schemas/Example'
+        $ref: '#/components/schemas/User'
+
+    CreatePost:
+      type: object
+      required: [ content ]
+      properties:
+        content:
+          type: string
+          example: "This is a post"
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        content:
+          type: string
+          example: "This is a post"
+        createdAt:
+          type: string
+          format: DateTime
+          pattern: YYYY-MM-DDTHH:MM:SS
+          example: 2023-03-14T11:01:56.633+00:00
+        updatedAt:
+          type: string
+          format: DateTime
+          pattern: YYYY-MM-DDTHH:MM:SS
+          example: 2023-03-14T11:01:56.633+00:00
+
+    AllPosts:
+      type: array
+      items:
+        $ref: '#/components/schemas/Post'
