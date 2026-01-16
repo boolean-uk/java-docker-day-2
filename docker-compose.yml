@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  api:
+    image: 'java-docker-day-2:latest'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/db
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+
+  db:
+    image: postgres:latest
+    container_name: db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./data:/var/lib/postgresql/dbdata3
