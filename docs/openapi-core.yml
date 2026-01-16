@@ -1,52 +1,78 @@
 openapi: 3.0.3
 info:
-  title: Java API Exercise - Core Criteria
-  description: |-
-  version: 0.2.2
+  title: Java Docker day 2 Exercise - Core Criteria
+  description: Java Docker day 2 Exercise - Core Criteria
+  version: 1.0.0
 
 servers:
   - url: http://localhost:4000
 tags:
-  - name: examples
+  - name: posts
 paths:
-  /examples:
+  /posts:
     post:
       tags:
-        - examples
-      summary: Example POST route
-      description: Description of an example POST route
+        - posts
+      summary: Create new post
+      description: Create new post
+      operationId: createPost
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateExample'
+              $ref: '#/components/schemas/CreatePost'
       responses:
-        201:
+        '201':
+          description: Created response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/Post'
     get:
       tags:
-        - examples
-      summary: Example GET route
-      description: Description of an example GET route
+        - posts
+      summary: Get all posts
+      description: Get all posts as list
+      operationId: getAllPosts
       responses:
-        200:
+        '200':
+          description: OK response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllExamples'
-  /examples/{id}:
-    put:
+                $ref: '#/components/schemas/AllPosts'
+  /posts/{id}:
+    get:
       tags:
-        - examples
-      summary: Example PUT route
-      description: Description of an example PUT route
+        - posts
+      summary: Get post
+      description: Get post by id
+      operationId: getPostById
       parameters:
         - name: id
           in: path
-          description: The ID of the example to update
+          description: The ID of the post to get
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+
+    put:
+      tags:
+        - posts
+      summary: Update a post
+      description: Update a post by id
+      operationId: updatePost
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the post to update
           required: true
           schema:
             type: integer
@@ -54,46 +80,46 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateExample'
+              $ref: '#/components/schemas/CreatePost'
       responses:
-        201:
+        '201':
+          description: Created response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/Post'
     delete:
       tags:
-        - examples
-      summary: Example DELETE route
-      description: Description of an example DELETE route
+        - posts
+      summary: Delete a post
+      description: Delete a post by id
+      operationId: deletePost
       parameters:
         - name: id
           in: path
-          description: The ID of the example to delete
+          description: The ID of the post to delete
           required: true
           schema:
             type: integer
       responses:
-        200:
+        '200':
+          description: OK response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/Post'
 
 components:
   schemas:
-    CreateExample:
+    CreatePost:
       type: object
-      required: [propertyOne, propertyTwo]
+      required: [post]
       properties:
         propertyOne:
           type: string
-          example: "Example Value"
-        propertyTwo:
-          type: email
-          format: email
-          example: "example@email.value"
-    Example:
+          example: "Hello, this is my first post"
+
+    Post:
       type: object
       properties:
         id:
@@ -101,16 +127,16 @@ components:
           example: 1
         propertyOne:
           type: string
-          example: "Example Value"
-        propertyTwo:
-          type: string
-          example: "example@email.value"
+          example: "Hello, this is my first post"
         createdAt:
           type: string
           format: DateTime
-          pattern: YYYY-MM-DDTHH:MM:SS
           example: 2023-03-14T11:01:56.633+00:00
-    AllExamples:
+        updatedAt:
+          type: string
+          format: DateTime
+          example: 2023-03-14T11:01:56.633+00:00
+    AllPosts:
       type: array
       items:
-        $ref: '#/components/schemas/Example'
+        $ref: '#/components/schemas/Post'
