@@ -33,5 +33,9 @@ out/
 /nbdist/
 /.nb-gradle/
 
+*.jar
+
 ### VS Code ###
 .vscode/
+
+src/main/resources/application.yml
