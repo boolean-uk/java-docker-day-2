@@ -1,116 +1,354 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
-  title: Java API Exercise - Core Criteria
-  description: |-
-  version: 0.2.2
-
+  title: Twitter Reclaimed
+  description: API for managing users, messages, and likes
+  version: 1.0.0
 servers:
   - url: http://localhost:4000
-tags:
-  - name: examples
+    description: Local server
 paths:
-  /examples:
-    post:
-      tags:
-        - examples
-      summary: Example POST route
-      description: Description of an example POST route
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateExample'
-      responses:
-        201:
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Example'
+  /users:
     get:
-      tags:
-        - examples
-      summary: Example GET route
-      description: Description of an example GET route
+      summary: Get all users
       responses:
-        200:
+        '200':
+          description: A list of users
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllExamples'
-  /examples/{id}:
-    put:
-      tags:
-        - examples
-      summary: Example PUT route
-      description: Description of an example PUT route
-      parameters:
-        - name: id
-          in: path
-          description: The ID of the example to update
-          required: true
-          schema:
-            type: integer
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a new user
       requestBody:
+        description: Only username is required for creating a user
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateExample'
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Username of the user
+                  example: john_doe
       responses:
-        201:
+        '201':
+          description: The created user
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
-    delete:
-      tags:
-        - examples
-      summary: Example DELETE route
-      description: Description of an example DELETE route
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid user data
+
+  /users/{id}:
+    get:
+      summary: Get a user by ID
       parameters:
-        - name: id
-          in: path
-          description: The ID of the example to delete
-          required: true
+        - in: path
+          name: id
           schema:
             type: integer
+          required: true
+          description: User ID
       responses:
-        200:
+        '200':
+          description: User found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Example'
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+    put:
+      summary: Update a user by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      requestBody:
+        description: Update the user's username
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: New username for the user
+                  example: john_updated
+      responses:
+        '201':
+          description: The updated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+        '400':
+          description: Invalid user data
+    delete:
+      summary: Delete a user by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+      responses:
+        '200':
+          description: The deleted user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+
+  /messages:
+    get:
+      summary: Get all messages
+      responses:
+        '200':
+          description: A list of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+    post:
+      summary: Create a new message
+      requestBody:
+        description: Message object that needs to be added
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: Content of the message
+                  example: "This is a test message"
+                postedDate:
+                  type: string
+                  format: date
+                  description: Date the message was posted
+                  example: "2024-09-19"
+                userId:
+                  type: integer
+                  description: ID of the user posting the message
+                  example: 1
+      responses:
+        '201':
+          description: The created message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          description: Invalid message data
+
+  /messages/{id}:
+    get:
+      summary: Get a message by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Message ID
+      responses:
+        '200':
+          description: Message found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Message not found
+    put:
+      summary: Update a message by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Message ID
+      requestBody:
+        description: Message object with updated details
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: Updated content of the message
+                  example: "Updated message content"
+                postedDate:
+                  type: string
+                  format: date
+                  description: Updated posted date
+                  example: "2024-09-20"
+      responses:
+        '201':
+          description: The updated message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Message not found
+        '400':
+          description: Invalid message data
+    delete:
+      summary: Delete a message by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Message ID
+      responses:
+        '200':
+          description: The deleted message
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '404':
+          description: Message not found
+
+  /likes:
+    get:
+      summary: Get all likes
+      responses:
+        '200':
+          description: A list of likes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Like'
+    post:
+      summary: Create a new like
+      requestBody:
+        description: Create a new like for a message
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  description: ID of the user liking the message
+                  example: 1
+                messageId:
+                  type: integer
+                  description: ID of the message being liked
+                  example: 1
+      responses:
+        '201':
+          description: The created like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+        '400':
+          description: Invalid input data
+
+  /likes/{id}:
+    get:
+      summary: Get a like by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Like ID
+      responses:
+        '200':
+          description: Like found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+        '404':
+          description: Like not found
+    delete:
+      summary: Delete a like by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: Like ID
+      responses:
+        '200':
+          description: The deleted like
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Like'
+        '404':
+          description: Like not found
 
 components:
   schemas:
-    CreateExample:
-      type: object
-      required: [propertyOne, propertyTwo]
-      properties:
-        propertyOne:
-          type: string
-          example: "Example Value"
-        propertyTwo:
-          type: email
-          format: email
-          example: "example@email.value"
-    Example:
+    User:
       type: object
       properties:
         id:
           type: integer
-          example: 1
-        propertyOne:
+          description: User ID
+        username:
           type: string
-          example: "Example Value"
-        propertyTwo:
+          description: Username of the user
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Message ID
+        text:
           type: string
-          example: "example@email.value"
-        createdAt:
+          description: Content of the message
+        postedDate:
           type: string
-          format: DateTime
-          pattern: YYYY-MM-DDTHH:MM:SS
-          example: 2023-03-14T11:01:56.633+00:00
-    AllExamples:
-      type: array
-      items:
-        $ref: '#/components/schemas/Example'
+          format: date
+          description: Date the message was posted
+        userId:
+          type: integer
+          description: The ID of the user who posted the message
+
+    Like:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Like ID
+        userId:
+          type: integer
+          description: The ID of the user who liked the message
+        messageId:
+          type: integer
+          description: The ID of the liked message
