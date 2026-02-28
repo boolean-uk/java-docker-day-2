@@ -1,0 +1,21 @@
+services:
+  app:
+    image: 'day2:latest'
+    container_name: app
+    depends_on:
+      - db
+    ports:
+      - '4000:4000'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mypostgresuser
+      - SPRING_DATASOURCE_USERNAME=mypostgresuser
+      - SPRING_DATASOURCE_PASSWORD=mypostgrespassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  db:
+    image: 'postgres:latest'
+    container_name: db
+    environment:
+      - POSTGRES_USER=mypostgresuser
+      - POSTGRES_DATABASE=mypostgresuser
+      - POSTGRES_PASSWORD=mypostgrespassword
